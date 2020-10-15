@@ -29,16 +29,16 @@
 				<fieldset>
 					<legend>Enter new GeoTag</legend>
 					<form id="tag-form" action="/tagging" method="post">
-						<label>latitude:</label>
+						<label>latitude:</label><br/>
 						<input id="latitude_geotag" type="text" name="latitude" placeholder="Latitude of your place"
 							   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required/><br/>
-						<label>longitude:</label>
+						<label>longitude:</label><br/>
 						<input id="longitude_geotag" type="text" name="longitude" placeholder="Longitude of your place"
 							   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required/><br/>
-						<label>name:</label>
+						<label>name:</label><br/>
 						<input id="name_geotag" type="text" name="name_box" placeholder="Your name" maxlength="10"
 							   required/><br/>
-						<label>hashtag:</label>
+						<label>hashtag:</label><br/>
 						<input id="hashtag_geotag" type="text" name="hashtag_box"
 							   placeholder="# + max. 10 letters" maxlength="11" pattern="\#(w*)"><br/>
 						<input id="submit_geotag" type="submit" value="Submit" />
