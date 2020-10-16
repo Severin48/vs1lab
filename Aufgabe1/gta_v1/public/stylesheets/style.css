@@ -2,7 +2,32 @@ body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-
+header {
+  background: lightgrey;
+}
+footer {
+  background: lightgrey;
+}
 a {
   color: #00B7FF;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+}
+.tagging{
+
+}
+.discovery{
+
+}
+.taglist {
+
+  background: lightskyblue;
+}
+.tagmap {
+
+
 }

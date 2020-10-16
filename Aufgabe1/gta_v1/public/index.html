@@ -29,20 +29,19 @@
 				<fieldset>
 					<legend>Enter new Geo Tag</legend>
 					<form id="tag-form" action="/tagging" method="post">
-						<label>Latitude</label>
+						<label>Latitude</label><br/>
 						<input id ="lat" name="latitude" type="text" placeholder="e.g. 61.32295"
 							   pattern="^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)" required>
-						<label>Longitude</label>
+						<label>Longitude</label><br/>
 						<input id ="lon" name="longitude" type="text" placeholder="e.g. 83.91426"
 							   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required>
-						<label>Name</label>
+						<label>Name</label><br/>
 						<input id ="name" name="name" type="text" maxlength="10" required>
-						<label>Hashtag</label>
+						<label>Hashtag</label><br/>
 						<input id ="hashtag" name="hashtag" type="text" maxlength="11" pattern="\#(w*)"> // Has to start with #
 						<input id="submit_tag" name="submitbutton" type="submit">
 					</form>
 				</fieldset>
-
 				<!-- ############### Aufgabe1a Form1 Ende -->
 
 			</section>
