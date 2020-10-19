@@ -1,7 +1,11 @@
+* {
+  box-sizing: border-box;
+}
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
+
 header {
   background: lightgrey;
 }
@@ -11,23 +15,35 @@ footer {
 a {
   color: #00B7FF;
 }
-main {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex-wrap: nowrap;
-}
-.tagging{
-
-}
-.discovery{
-
-}
-.taglist {
-
-  background: lightskyblue;
-}
-.tagmap {
 
 
+@media screen and (min-width: 800px),(min-width: 3000px){
+  main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    align-items: flex-start;
+
+  }
+  .tagging{
+    width: 20%;
+  }
+  .discovery{
+    width: 75%;
+  }
+  .taglist {
+    width: 30%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .taglist #results{
+    background: #00B7FF;
+  }
+  li {
+    color: white;
+  }
+  .tagmap {
+    width: 40%;
+  }
 }
