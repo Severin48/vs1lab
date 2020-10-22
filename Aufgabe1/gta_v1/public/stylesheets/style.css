@@ -8,17 +8,34 @@ body {
 
 header {
   background: lightgrey;
+  padding: 15px;
 }
 footer {
   background: lightgrey;
+  padding: 15px;
+  float: bottom;
 }
 a {
   color: #00B7FF;
 }
+a:hover{
+  color: darkblue;
+}
+legend {
+  font: 18px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+label {
+  display: block;
+  padding: 4px;
+}
+#submit_geotag {
+  margin-top: 7px;
+}
 
 
 @media screen and (min-width: 800px),(min-width: 3000px){
-  main {
+
+  main{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -26,26 +43,64 @@ a {
     align-items: flex-start;
 
   }
-  .tagging{
-    width: 20%;
+
+  .tagging {
+    width: 22%;
   }
-  .discovery{
+  .discovery {
     width: 75%;
   }
   .taglist {
-    width: 30%;
-    display: flex;
-    justify-content: space-between;
-  }
-  .taglist #results{
-    background: #00B7FF;
-  }
-  li {
-    color: white;
+    width: 35%;
   }
   .tagmap {
     width: 40%;
   }
+  #results {
+    list-style-type: none;
+  }
+  li {
+    color: white;
+    background: #00B7FF;
+    padding: 6px;
+    margin: 6px;
+  }
+  /*.discovery {
+    display: grid;
+    width: 75%;
+    grid-template-columns:[first] 37.5% [line2] 37.5% [end];
+    grid-template-rows: [row1] 13% [row2] 13% [row3] 50% [last-line];
+  }
+
+  #fieldsearch {
+    grid-column-start: first;
+    grid-column-end: end;
+    grid-row-start: row2;
+    grid-row-end: row3;
+  }
+  .taglist {
+    grid-row-start: row3;
+    grid-row-end: last-line;
+    grid-column-start: first;
+    grid-column-end: line2;
+  }
+  .tagmap {
+    grid-row-start: row3;
+    grid-row-end: last-line;
+    grid-column-start: line2;
+    grid-column-end: last-line;
+  }*/
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
