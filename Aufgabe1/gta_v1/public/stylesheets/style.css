@@ -31,33 +31,50 @@ label {
 #submit_geotag {
   margin-top: 7px;
 }
+main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: flex-start;
+}
 
-
-@media screen and (min-width: 800px),(min-width: 3000px){
-
-  main{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    align-items: flex-start;
-
+@media screen and (max-width: 950px) {
+  main {
+    flex-wrap: wrap;
   }
-
+  main > section {
+    flex: 2 2 50%
+  }
+}
   .tagging {
     width: 22%;
   }
   .discovery {
+    display: flex;
     width: 75%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .discovery > h2 {
+    flex: 75%;
+  }
+  .discovery > fieldset {
+    flex: 75%;
   }
   .taglist {
-    width: 35%;
-  }
-  .tagmap {
-    width: 40%;
+    flex: 30%;
+    margin: 6px;
   }
   #results {
     list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  .tagmap > img {
+    margin: 6px;
   }
   li {
     color: white;
@@ -65,42 +82,6 @@ label {
     padding: 6px;
     margin: 6px;
   }
-  /*.discovery {
-    display: grid;
-    width: 75%;
-    grid-template-columns:[first] 37.5% [line2] 37.5% [end];
-    grid-template-rows: [row1] 13% [row2] 13% [row3] 50% [last-line];
+  .caption {
+    margin-bottom: 8px;
   }
-
-  #fieldsearch {
-    grid-column-start: first;
-    grid-column-end: end;
-    grid-row-start: row2;
-    grid-row-end: row3;
-  }
-  .taglist {
-    grid-row-start: row3;
-    grid-row-end: last-line;
-    grid-column-start: first;
-    grid-column-end: line2;
-  }
-  .tagmap {
-    grid-row-start: row3;
-    grid-row-end: last-line;
-    grid-column-start: line2;
-    grid-column-end: last-line;
-  }*/
-
-
-
-
-
-
-
-
-
-
-
-}
-
-
