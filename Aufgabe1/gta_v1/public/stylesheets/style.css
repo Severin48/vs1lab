@@ -8,42 +8,80 @@ body {
 
 header {
   background: lightgrey;
+  padding: 15px;
 }
 footer {
   background: lightgrey;
+  padding: 15px;
+  float: bottom;
 }
 a {
   color: #00B7FF;
 }
+a:hover{
+  color: darkblue;
+}
+legend {
+  font: 18px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+label {
+  display: block;
+  padding: 4px;
+}
+#submit_geotag {
+  margin-top: 7px;
+}
+main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: flex-start;
+}
 
-
-@media screen and (min-width: 800px),(min-width: 3000px){
+@media screen and (max-width: 950px) {
   main {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    align-items: flex-start;
-
+    flex-wrap: wrap;
   }
-  .tagging{
-    width: 20%;
+  main > section {
+    flex: 2 2 50%
   }
-  .discovery{
-    width: 75%;
-  }
-  .taglist {
-    width: 30%;
-    display: flex;
-    justify-content: space-between;
-  }
-  .taglist #results{
-    background: #00B7FF;
-  }
-  li {
-    color: white;
-  }
-  .tagmap {
-    width: 40%;
-  }
+}
+.tagging {
+  width: 22%;
+}
+.discovery {
+  display: flex;
+  width: 75%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.discovery > h2 {
+  flex: 75%;
+}
+.discovery > fieldset {
+  flex: 75%;
+}
+.taglist {
+  flex: 30%;
+  margin: 6px;
+}
+#results {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.tagmap > img {
+  margin: 6px;
+}
+li {
+  color: white;
+  background: #00B7FF;
+  padding: 6px;
+  margin: 6px;
+}
+.caption {
+  margin-bottom: 8px;
 }
