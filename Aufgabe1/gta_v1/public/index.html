@@ -32,17 +32,17 @@
 			<legend>Enter new GeoTag</legend>
 			<form id="tag-form" action="/tagging" method="post">
 				<label>Latitude:</label>
-				<input id="latitude_geotag" type="text" name="latitude" placeholder="Latitude of your place"
+				<input id="latitude_geotag" name="latitude" placeholder="Latitude of your place"
 					   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required/>
 				<label>Longitude:</label>
-				<input id="longitude_geotag" type="text" name="longitude" placeholder="Longitude of your place"
+				<input id="longitude_geotag" name="longitude" placeholder="Longitude of your place"
 					   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required/>
 				<label>Name:</label>
-				<input id="name_geotag" type="text" name="name_box" placeholder="Your name" maxlength="10"
+				<input id="name_geotag" name="name_box" placeholder="Location name" maxlength="10"
 					   required/>
 				<label>Hashtag:</label>
 				<input id="hashtag_geotag" type="text" name="hashtag_box"
-					   placeholder="# + max. 10 letters" maxlength="11" pattern="\#(w*)">
+					   placeholder="# + max. 10 letters" maxlength="11" pattern="\#(w*)"> <!-- type="text" optional -->
 				<input id="submit_geotag" type="submit" value="Submit" />
 				<!-- ############### Aufgabe1a Form1 Ende -->
 			</form>
