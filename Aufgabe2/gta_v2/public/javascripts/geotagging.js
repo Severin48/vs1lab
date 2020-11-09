@@ -82,7 +82,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
     };
 
     // Hier Google Maps API Key eintragen
-    var apiKey = "YOUR_API_KEY_HERE";
+    var apiKey = 3Mu8HWGAKCg0huZfoLbeEcbeGjAkB76G;
 
     /**
      * Funktion erzeugt eine URL, die auf die Karte verweist.
@@ -121,6 +121,9 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         updateLocation: function() {
             // TODO Hier Inhalt der Funktion "update" ergänzen
+            if(tryLocate()=false){
+                var longitude = getLongitude();
+                var latitude = getLatitude();
         }
 
     }; // ... Ende öffentlicher Teil
