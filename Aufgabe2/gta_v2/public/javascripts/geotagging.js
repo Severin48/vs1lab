@@ -121,9 +121,13 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         updateLocation: function() {
             // TODO Hier Inhalt der Funktion "update" ergänzen
-            if(tryLocate()=false){
-                var longitude = getLongitude();
-                var latitude = getLatitude();
+            var x = new GEOLOCATIONAPI;
+            var y = tryLocate(x);
+            if (y == true){
+                var lat = getLatitude(x);
+                var lon = getLongitude(x);
+            }
+
         }
 
     }; // ... Ende öffentlicher Teil
