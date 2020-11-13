@@ -31,7 +31,7 @@ GEOLOCATIONAPI = {
 
 // Die echte API ist diese.
 // Falls es damit Probleme gibt, kommentieren Sie die Zeile aus.
-GEOLOCATIONAPI = navigator.geolocation;
+//GEOLOCATIONAPI = navigator.geolocation;
 
 /**
  * GeoTagApp Locator Modul
@@ -82,7 +82,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
     };
 
     // Hier Google Maps API Key eintragen
-    var apiKey = 3Mu8HWGAKCg0huZfoLbeEcbeGjAkB76G;
+    //var apiKey = 3Mu8HWGAKCg0huZfoLbeEcbeGjAkB76G;
 
     /**
      * Funktion erzeugt eine URL, die auf die Karte verweist.
@@ -121,12 +121,9 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         updateLocation: function() {
             // TODO Hier Inhalt der Funktion "update" ergänzen
-            var x = new GEOLOCATIONAPI;
-            var y = tryLocate(x);
-            if (y == true){
-                var lat = getLatitude(x);
-                var lon = getLongitude(x);
-            }
+            tryLocate();
+
+
 
         }
 
@@ -141,4 +138,5 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 $(function() {
     alert("Please change the script 'geotagging.js'");
     // TODO Hier den Aufruf für updateLocation einfügen
+    gtaLocator.updateLocation();
 });
