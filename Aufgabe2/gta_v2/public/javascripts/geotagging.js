@@ -120,8 +120,23 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            // TODO Hier Inhalt der Funktion "update" ergänzen
-        }
+            //geoLocationApi.getCurrentPosition(getLatitude)
+            let coords = tryLocate(function () {
+                
+                //hier latitude und longitude Eingabefelder des Tagging-Formulars und des Discovery-Formulars
+                // (versteckte Eingabefelder) suchen und in deren value-Attribute Koordinaten schreiben.
+            }, alert("Error2"))
+
+            //let coords = tryLocate.coords.latitude
+            //var coords = GEOLOCATIONAPI.getCurrentPosition()
+            // var longitude = tryLocate.coords.longitude
+
+            //console.log(latitude)
+
+            console.log(coords)
+            // console.log(longitude)
+
+    }
 
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
@@ -132,6 +147,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 $(function() {
-    alert("Please change the script 'geotagging.js'");
-    // TODO Hier den Aufruf für updateLocation einfügen
+    alert("Empty");
+    gtaLocator.updateLocation()
 });
