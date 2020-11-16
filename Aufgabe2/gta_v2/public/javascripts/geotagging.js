@@ -121,9 +121,36 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         updateLocation: function() {
             // TODO Hier Inhalt der Funktion "update" ergänzen
-            tryLocate();
+            //geoLocationApi.getCurrentPosition(getLatitude)
+            let coords = tryLocate(function () {
+                let longTag2 = document.querySelector("#longitude_geotag").value;
+                let latTag2 = document.querySelector("#latitude_geotag").value;
+                console.log(longTag2, latTag2);
+                         // console.log(getLongitude(longTag2, latTag2));
+                        /*  var longTag = document.getElementById("longitude_geotag").value;
+                            var latTag = document.getElementById("latitude_geotag").value;
+                            console.log(longTag, latTag);
+                            var longDis = document.getElementById("hidden_longitude").value;
+                            var latDis = document.getElementById("hidden_latitude");*/
+                document.getElementById("hidden_latitude").value = latTag2;
+                document.getElementById("hidden_longitude").value = longTag2;
+                var longDis = document.getElementById("hidden_longitude").value;
+                var latDis = document.getElementById("hidden_latitude").value;
+                console.log(longDis,latDis);
+                //hier latitude und longitude Eingabefelder des Tagging-Formulars und des Discovery-Formulars
+                // (versteckte Eingabefelder) suchen und in deren value-Attribute Koordinaten schreiben.
+            }, onerror);
+            if (onerror != null ) {
+                alert(onerror);
+            }
+            //let coords = tryLocate.coords.latitude
+            //var coords = GEOLOCATIONAPI.getCurrentPosition()
+            // var longitude = tryLocate.coords.longitude
 
+            //console.log(latitude)
 
+            console.log(coords)
+            // console.log(longitude)
 
         }
 
@@ -138,5 +165,13 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 $(function() {
     alert("Please change the script 'geotagging.js'");
     // TODO Hier den Aufruf für updateLocation einfügen
-    gtaLocator.updateLocation();
+    document.getElementById("submit_geotag").onclick = function (event){
+        alert('WUHU');
+        gtaLocator.updateLocation();
+    }
+    /*$(".submit_geotag").click( gtaLocator.updateLocation());
+    document.getElementById("submit_geotag").onclick = displayCoords();
+    function displayCoords() {
+        gtaLocator.updateLocation();
+    }*/
 });
