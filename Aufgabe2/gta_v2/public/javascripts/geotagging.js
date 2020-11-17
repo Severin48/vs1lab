@@ -82,7 +82,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
     };
 
     // Hier Google Maps API Key eintragen
-    var apiKey = "YOUR_API_KEY_HERE";
+    var apiKey = "B5aYS78xCzpTsiqpdXgnuttHp69wXiHr";
 
     /**
      * Funktion erzeugt eine URL, die auf die Karte verweist.
@@ -120,22 +120,17 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            //geoLocationApi.getCurrentPosition(getLatitude)
             let coords = tryLocate(function () {
-                
-                //hier latitude und longitude Eingabefelder des Tagging-Formulars und des Discovery-Formulars
-                // (versteckte Eingabefelder) suchen und in deren value-Attribute Koordinaten schreiben.
-            }, alert("Error2"))
-
-            //let coords = tryLocate.coords.latitude
-            //var coords = GEOLOCATIONAPI.getCurrentPosition()
-            // var longitude = tryLocate.coords.longitude
-
-            //console.log(latitude)
+                let lon = document.querySelector("#longitude_geotag").value;
+                let lat = document.querySelector("#latitude_geotag").value;
+                //console.log(lon, lat);
+                document.getElementById("hidden_latitude").value = lat;
+                document.getElementById("hidden_longitude").value = lon;
+                let img_src = getLocationMapSrc(lat, lon, undefined, 20) //tags fehlen noch??
+                document.getElementById("result-img").src = img_src;
+            }, alert("Could not locate"))
 
             console.log(coords)
-            // console.log(longitude)
-
     }
 
     }; // ... Ende öffentlicher Teil
@@ -147,6 +142,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 $(function() {
-    alert("Empty");
+    alert("Test Alert");
     gtaLocator.updateLocation()
 });
