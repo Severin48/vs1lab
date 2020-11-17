@@ -123,7 +123,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
             let coords = tryLocate(function () {
                 let lon = document.querySelector("#longitude_geotag").value;
                 let lat = document.querySelector("#latitude_geotag").value;
-                //console.log(lon, lat);
                 document.getElementById("hidden_latitude").value = lat;
                 document.getElementById("hidden_longitude").value = lon;
                 let img_src = getLocationMapSrc(lat, lon, undefined, 20) //tags fehlen noch??
@@ -131,6 +130,9 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
             }, alert("Could not locate"))
 
             console.log(coords)
+            //TODO : Add functionality to Submit button, fill tags in let img_src
+            //* tags : Array mit Geotag Objekten, das auch leer bleiben kann
+            // submit onclick --> updateLocation()
     }
 
     }; // ... Ende öffentlicher Teil
@@ -142,6 +144,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 $(function() {
-    alert("Test Alert");
+    //alert("Test Alert");
     gtaLocator.updateLocation()
 });
