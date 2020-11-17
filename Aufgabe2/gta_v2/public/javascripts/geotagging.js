@@ -70,7 +70,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
             onerror("Geolocation is not supported by this browser.");
         }
     };
-
+    const tags = new Array();
     // Auslesen Breitengrad aus der Position
     var getLatitude = function(position) {
         return position.coords.latitude;
@@ -123,15 +123,19 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
             let coords = tryLocate(function () {
                 let lon = document.querySelector("#longitude_geotag").value;
                 let lat = document.querySelector("#latitude_geotag").value;
+                let name_geo = document.querySelector("#name_geotag").value;
+                let tag = {name: name_geo, longitude: lon, latitude:lat}
+                tags.push(tag)
+                console.log("Tag: " + tag)
+                console.log("Tags: " + tags)
                 document.getElementById("hidden_latitude").value = lat;
                 document.getElementById("hidden_longitude").value = lon;
-                let img_src = getLocationMapSrc(lat, lon, undefined, 20) //tags fehlen noch??
+                let img_src = getLocationMapSrc(lat, lon, tags, 10)
                 document.getElementById("result-img").src = img_src;
             }, alert("Could not locate"))
 
             console.log(coords)
             //TODO : Add functionality to Submit button, fill tags in let img_src
-            //* tags : Array mit Geotag Objekten, das auch leer bleiben kann
             // submit onclick --> updateLocation()
     }
 
@@ -145,5 +149,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  */
 $(function() {
     //alert("Test Alert");
+
     gtaLocator.updateLocation()
 });
