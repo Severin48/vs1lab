@@ -70,7 +70,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
             onerror("Geolocation is not supported by this browser.");
         }
     };
-
+    const tags = new Array();
     // Auslesen Breitengrad aus der Position
     var getLatitude = function(position) {
         return position.coords.latitude;
@@ -82,7 +82,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
     };
 
     // Hier Google Maps API Key eintragen
-    //var apiKey = 3Mu8HWGAKCg0huZfoLbeEcbeGjAkB76G;
+    var apiKey = "B5aYS78xCzpTsiqpdXgnuttHp69wXiHr";
 
     /**
      * Funktion erzeugt eine URL, die auf die Karte verweist.
@@ -120,38 +120,26 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            // TODO Hier Inhalt der Funktion "update" ergänzen
+
             //geoLocationApi.getCurrentPosition(getLatitude)
             let coords = tryLocate(function () {
-                let longTag2 = document.querySelector("#longitude_geotag").value;
-                let latTag2 = document.querySelector("#latitude_geotag").value;
-                console.log(longTag2, latTag2);
-                         // console.log(getLongitude(longTag2, latTag2));
-                        /*  var longTag = document.getElementById("longitude_geotag").value;
-                            var latTag = document.getElementById("latitude_geotag").value;
-                            console.log(longTag, latTag);
-                            var longDis = document.getElementById("hidden_longitude").value;
-                            var latDis = document.getElementById("hidden_latitude");*/
-                document.getElementById("hidden_latitude").value = latTag2;
-                document.getElementById("hidden_longitude").value = longTag2;
-                var longDis = document.getElementById("hidden_longitude").value;
-                var latDis = document.getElementById("hidden_latitude").value;
-                console.log(longDis,latDis);
-                //hier latitude und longitude Eingabefelder des Tagging-Formulars und des Discovery-Formulars
-                // (versteckte Eingabefelder) suchen und in deren value-Attribute Koordinaten schreiben.
-            }, onerror);
-            if (onerror != null ) {
-                alert(onerror);
-            }
-            //let coords = tryLocate.coords.latitude
-            //var coords = GEOLOCATIONAPI.getCurrentPosition()
-            // var longitude = tryLocate.coords.longitude
-
-            //console.log(latitude)
-
+                let lon = document.querySelector("#longitude_geotag").value;
+                let lat = document.querySelector("#latitude_geotag").value;
+                let name_geo = document.querySelector("#name_geotag").value;
+                let tag = {name: name_geo, longitude: lon, latitude:lat}
+                tags.push(tag)
+                console.log("Tag: " + tag)
+                console.log("Tags: " + tags)
+                document.getElementById("hidden_latitude").value = lat;
+                document.getElementById("hidden_longitude").value = lon;
+                let img_src = getLocationMapSrc(lat, lon, tags, 10);
+                document.getElementById("result-img").src = img_src;
+            }, function() {
+                if(onerror !== null) {
+                    alert(onerror)
+                }
+            })
             console.log(coords)
-            // console.log(longitude)
-
         }
 
     }; // ... Ende öffentlicher Teil
@@ -163,15 +151,10 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 $(function() {
-    alert("Please change the script 'geotagging.js'");
-    // TODO Hier den Aufruf für updateLocation einfügen
+
     document.getElementById("submit_geotag").onclick = function (event){
-        alert('WUHU');
+
         gtaLocator.updateLocation();
     }
-    /*$(".submit_geotag").click( gtaLocator.updateLocation());
-    document.getElementById("submit_geotag").onclick = displayCoords();
-    function displayCoords() {
-        gtaLocator.updateLocation();
-    }*/
+
 });
