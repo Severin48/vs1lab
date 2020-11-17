@@ -130,13 +130,16 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
                 console.log("Tags: " + tags)
                 document.getElementById("hidden_latitude").value = lat;
                 document.getElementById("hidden_longitude").value = lon;
-                let img_src = getLocationMapSrc(lat, lon, tags, 10)
+                let img_src = getLocationMapSrc(lat, lon, tags, 16)
                 document.getElementById("result-img").src = img_src;
-            }, alert("Could not locate"))
+            }, function() {
+                if(onerror !== null) {
+                        alert(onerror)
+                    }
+                }
+            )
 
             console.log(coords)
-            //TODO : Add functionality to Submit button, fill tags in let img_src
-            // submit onclick --> updateLocation()
     }
 
     }; // ... Ende öffentlicher Teil
@@ -148,7 +151,8 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 $(function() {
-    //alert("Test Alert");
+    document.getElementById("submit_geotag").onclick = function (event){
+        gtaLocator.updateLocation();
+    }
 
-    gtaLocator.updateLocation()
 });
