@@ -162,7 +162,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
                 alert(msg);
                 }))
             }
-        //}
+
 
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
