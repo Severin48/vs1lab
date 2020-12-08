@@ -4,6 +4,8 @@
  * Verzeichnisbaum implementieren. Dazu müssen die TODOs erledigt werden.
  */
 
+import * as path from "path";
+
 /**
  * Definiere Modul Abhängigkeiten und erzeuge Express app.
  */
@@ -31,12 +33,19 @@ app.set('view engine', 'ejs');
 
 // TODO: CODE ERGÄNZEN
 
+    app.use(express.static(__dirname + "public"));
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
  */
 
 // TODO: CODE ERGÄNZEN
+    function GeoTag (latitudeTagging, longitudeTagging, name, hashtag ){
+        this.latitudeTagging = latitudeTagging;
+        this.lonitudeTaging = longitudeTagging;
+        this.name = name;
+        this.hashtag = hashtag;
+}
 
 /**
  * Modul für 'In-Memory'-Speicherung von GeoTags mit folgenden Komponenten:
@@ -48,6 +57,22 @@ app.set('view engine', 'ejs');
  */
 
 // TODO: CODE ERGÄNZEN
+
+    export function arraySpeicher (GeoTag){
+
+    }
+    export function searchGeoTags(){
+
+    }
+    export function searchSuchbegriff(){
+
+    }
+    export function addGeoTag(){
+
+    }
+    export function deleteGeoTags(){
+
+    }
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
@@ -78,7 +103,13 @@ app.get('/', function(req, res) {
  */
 
 // TODO: CODE ERGÄNZEN START
-
+app.get('/tagging', function (req, res){
+    console.log('YAAAYYYYYY!!');
+    req.body('tag-form');
+    res.render('gta', {
+        taglist: [GeoTag]
+    });
+})
 /**
  * Route mit Pfad '/discovery' für HTTP 'POST' Requests.
  * (http://expressjs.com/de/4x/api.html#app.post.method)
@@ -92,7 +123,12 @@ app.get('/', function(req, res) {
  */
 
 // TODO: CODE ERGÄNZEN
-
+app.get('/discovery', function(req, res){
+    req.body('filter-form');
+    res.render('gta',{
+        taglist:[GeoTag]
+    });
+})
 /**
  * Setze Port und speichere in Express.
  */
