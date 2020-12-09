@@ -33,7 +33,6 @@ app.set('view engine', 'ejs');
 // TODO: CODE ERGÄNZEN
 app.use(express.static(__dirname + "/public"));
 
-
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
@@ -70,6 +69,41 @@ function GeoTag (latitude, longitude, name, hashtag ){
  */
 
 // TODO: CODE ERGÄNZEN
+var taglist = [];
+function inMemory(){
+    let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
+    taglist.push(tag);
+}
+
+function searchName(name){
+    for (let tag in taglist){
+        if (tag.name === name) {
+            //found
+            //return tag.longitude, tag.latitude;
+            return tag;
+        }
+    }
+}
+
+function searchRadius(lon, lat, radius) {
+    let inRadius = [];
+    for (let tag in taglist){
+        if ((tag.longitude <= lon + radius || tag.longitude > lon - radius) && (tag.latitude <= lat + radius || tag.latitude > lat - radius)) {
+            //found
+            inRadius.push(tag);
+        }
+    }
+    return inRadius;
+}
+
+function addGeoTag(){
+    let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
+    taglist.push(tag);
+}
+
+function deleteGeoTag(tag){
+    taglist.splice(taglist.indexOf(tag), 1);
+}
 
 var InMemory = (function(){
     var taglist = [];
@@ -186,6 +220,7 @@ app.post('/discovery', function(req, res){
             datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
         })
     }
+
 
 });
 /**
