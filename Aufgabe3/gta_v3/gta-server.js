@@ -4,6 +4,7 @@
  * Verzeichnisbaum implementieren. Dazu müssen die TODOs erledigt werden.
  */
 
+
 /**
  * Definiere Modul Abhängigkeiten und erzeuge Express app.
  */
@@ -38,12 +39,26 @@ app.use(express.static(__dirname + "/public"));
  */
 
 // TODO: CODE ERGÄNZEN
-function GeoTag (latitudeTagging, longitudeTagging, name, hashtag ){
-    this.latitudeTagging = latitudeTagging;
-    this.longitudeTaging = longitudeTagging;
+function GeoTag (latitude, longitude, name, hashtag ){
+    this.longitude = longitude;
+    this.latitude = latitude;
     this.name = name;
     this.hashtag = hashtag;
+
+    this.getLatitude = function(){
+        return this.latitude;
+    };
+    this.getLongitude = function(){
+        return this.longitude;
+    };
+    this.getName = function(){
+        return this.name;
+    };
+    this.getHashtag = function(){
+        return this.hashtag;
+    };
 }
+
 /**
  * Modul für 'In-Memory'-Speicherung von GeoTags mit folgenden Komponenten:
  * - Array als Speicher für Geo Tags.
@@ -90,6 +105,38 @@ function deleteGeoTag(tag){
     taglist.splice(taglist.indexOf(tag), 1);
 }
 
+var InMemory = (function(){
+    var taglist = [];
+    return {
+        searchRadius: function (latitude, longitude, radius){
+            var resultList = taglist.filter(function (entry){
+                return (
+                    (Math.abs(entry.getLatitude()-latitude) < radius) &&
+                    (Math.abs(entry.getLongitude()-longitude) < radius)
+                );
+            });
+            return resultList;
+        },
+        searchBegriff: function (suchbegriff){
+            var resultList = taglist.filter(function (entry){
+                return (
+                    entry.getName().toString().includes(suchbegriff) || entry.getHashtag().toString().includes(suchbegriff)
+                );
+            });
+            return resultList;
+        },
+        add: function (GeoTag){
+            taglist.push;
+        },
+        delete: function (GeoTag){
+            taglist.splice(GeoTag.getCurrentPosition(),1);
+        }
+    }
+})
+
+
+
+
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -100,8 +147,13 @@ function deleteGeoTag(tag){
  */
 
 app.get('/', function(req, res) {
+    let lat = req.body.latitude;
+    let long = req.body.latitude;
     res.render('gta', {
-        taglist: []
+        taglist: InMemory.searchRadius(lat,long,5),
+        lat:lat,
+        long:long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
     });
 });
 
@@ -119,11 +171,19 @@ app.get('/', function(req, res) {
  */
 
 // TODO: CODE ERGÄNZEN START
-app.get("/tagging", function (req, res){
-    res.send("Hello!!!")
-    req.body('tag-form');
-    res.render('gta', {
-        taglist: [GeoTag]
+app.post('tagging', function (req, res){
+    let lat = req.body.latitude;
+    let long = req.body.longitude;
+    let name = req.body.name;
+    let hashtag = req.body.hashtag;
+
+    InMemory.add(new GeoTag(lat,long,name,hashtag));
+
+    res.render('gta',{
+        taglist: InMemory.searchRadius(lat,long,5),
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
     });
 });
 
@@ -140,13 +200,29 @@ app.get("/tagging", function (req, res){
  */
 
 // TODO: CODE ERGÄNZEN
-app.get('/discovery', function(req, res){
-    req.body('filter-form');
-    res.render('gta',{
-        taglist:[GeoTag]
-    });
-});
+app.post('/discovery', function(req, res){
+    var lat = req.body.hid_lat;
+    var long = req.body.hid_long;
+    var term = req.body.search;
 
+    if (term){
+        res.render('gta',{
+            taglist: InMemory.searchBegriff(term),
+            lat: lat,
+            long: long,
+            datatags: JSON.stringify(InMemory.searchBegriff(term))
+        })
+    } else {
+        res.render('gta',{
+            taglist: InMemory.searchRadius(lat,long,5),
+            lat: lat,
+            long: long,
+            datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+        })
+    }
+
+
+});
 /**
  * Setze Port und speichere in Express.
  */
@@ -165,3 +241,4 @@ var server = http.createServer(app);
  */
 
 server.listen(port);
+
