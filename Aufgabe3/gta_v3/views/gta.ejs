@@ -33,10 +33,10 @@
 			<form id="tag-form" action="/tagging" method="post">
 				<label>Latitude:</label>
 				<input id="latitude_geotag" type="text" name="latitude" placeholder="Latitude of your place"
-					   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required />
+					   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required value="<%= lat %>" />
 				<label>Longitude:</label>
 				<input id="longitude_geotag" type="text" name="longitude" placeholder="Longitude of your place"
-					   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required />
+					   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required value="<%= lon %>" />
 				<label>Name:</label>
 				<input id="name_geotag" type="text" name="name_box" placeholder="Your name" maxlength="10"
 					   required/>

@@ -137,12 +137,9 @@ var InMemory = function(){
 // zur Erzeugung der Einstiegsseite ist vorgegeben (hier sieht man, wie mit EJS eine HTML-Seite erzeugt wird
 app.get('/', function(req, res) {
     let lat = req.body.latitude;
-    let long = req.body.latitude;
+    let long = req.body.longitude;
     res.render('gta', {
-        taglist: InMemory.searchRadius(lat,long,5),
-        lat:lat,
-        long:long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+        taglist: []
     });
 });
 
@@ -172,7 +169,7 @@ app.post('/tagging', function (req, res){
     res.render('gta',{
         taglist: InMemory.searchRadius(lat,long,5),
         lat: lat,
-        long: long,
+        lon: long,
         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
     });
 });
@@ -193,22 +190,22 @@ app.post('/tagging', function (req, res){
 //zur Abfrage von GeoTags erstellen
 app.post('/discovery', function(req, res){
     var lat = req.body.hid_lat;
-    var long = req.body.hid_long;
+    var lon = req.body.hid_long;
     var term = req.body.search;
 
     if (term){
         res.render('gta',{
             taglist: InMemory.searchName(term),
             lat: lat,
-            long: long,
+            lon: lon,
             datatags: JSON.stringify(InMemory.searchName(term))
         })
     } else {
         res.render('gta',{
             taglist: InMemory.searchRadius(lat,long,5),
             lat: lat,
-            long: long,
-            datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+            lon: lon,
+            datatags: JSON.stringify(InMemory.searchRadius(lat,lon,5))
         })
     }
 
