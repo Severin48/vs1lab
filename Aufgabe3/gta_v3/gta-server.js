@@ -17,9 +17,7 @@ var express = require('express');
 var app;
 app = express();
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
+app.use(bodyParser.urlencoded({extended: false}));
 
 // Setze ejs als View Engine
 app.set('view engine', 'ejs');
@@ -96,10 +94,10 @@ function GeoTag (latitude, longitude, name, hashtag ){
 // }
 
 var InMemory = function(){
-    var taglist = [];
+    var tagList = [];
     return {
         searchRadius: function (latitude, longitude, radius){
-            var resultList = taglist.filter(function (entry){
+            var resultList = tagList.filter(function (entry){
                 return (
                     (Math.abs(latitude - entry.getLatitude()) <= radius) &&
                     (Math.abs(longitude - entry.getLongitude()) <= radius)
@@ -108,7 +106,7 @@ var InMemory = function(){
             return resultList;
         },
         searchName: function (name){
-            var resultList = taglist.filter(function (entry){
+            var resultList = tagList.filter(function (entry){
                 return (
                     entry.getName().toString().includes(name) || entry.getHashtag().toString().includes(name)
                 );
@@ -116,10 +114,10 @@ var InMemory = function(){
             return resultList;
         },
         add: function (GeoTag){
-            taglist.push;
+            tagList.push;
         },
         delete: function (GeoTag){
-            taglist.splice(GeoTag.getCurrentPosition(),1);
+            tagList.splice(GeoTag.getCurrentPosition(),1);
         }
     }
 }
