@@ -10,7 +10,6 @@
  */
 
 var http = require('http');
-//var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
@@ -69,58 +68,49 @@ function GeoTag (latitude, longitude, name, hashtag ){
  */
 
 // TODO: CODE ERGÄNZEN
-var taglist = [];
-function inMemory(){
-    let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
-    taglist.push(tag);
-}
 
-function searchName(name){
-    for (let tag in taglist){
-        if (tag.name === name) {
-            //found
-            //return tag.longitude, tag.latitude;
-            return tag;
-        }
-    }
-}
+// function inMemory(){
+//     let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
+//     taglist.push(tag);
+// }
 
-function searchRadius(lon, lat, radius) {
-    let inRadius = [];
-    for (let tag in taglist){
-        if ((tag.longitude <= lon + radius || tag.longitude > lon - radius) && (tag.latitude <= lat + radius || tag.latitude > lat - radius)) {
-            //found
-            inRadius.push(tag);
-        }
-    }
-    return inRadius;
-}
+// function searchRadius(lon, lat, radius) {
+//
+//     let inRadius = [];
+//     for (let tag in taglist){
+//         if ((tag.longitude <= lon + radius || tag.longitude > lon - radius) && (tag.latitude <= lat + radius || tag.latitude > lat - radius)) {
+//             //found
+//             inRadius.push(tag);
+//         }
+//     }
+//     return inRadius;
+// }
+//
+// function addGeoTag(){
+//     let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
+//     taglist.push(tag);
+// }
+//
+// function deleteGeoTag(tag){
+//     taglist.splice(taglist.indexOf(tag), 1);
+// }
 
-function addGeoTag(){
-    let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
-    taglist.push(tag);
-}
-
-function deleteGeoTag(tag){
-    taglist.splice(taglist.indexOf(tag), 1);
-}
-
-var InMemory = (function(){
+var InMemory = function(){
     var taglist = [];
     return {
         searchRadius: function (latitude, longitude, radius){
             var resultList = taglist.filter(function (entry){
                 return (
-                    (Math.abs(entry.getLatitude()-latitude) < radius) &&
-                    (Math.abs(entry.getLongitude()-longitude) < radius)
+                    (Math.abs(latitude - entry.getLatitude()) <= radius) &&
+                    (Math.abs(longitude - entry.getLongitude()) <= radius)
                 );
             });
             return resultList;
         },
-        searchBegriff: function (suchbegriff){
+        searchName: function (name){
             var resultList = taglist.filter(function (entry){
                 return (
-                    entry.getName().toString().includes(suchbegriff) || entry.getHashtag().toString().includes(suchbegriff)
+                    entry.getName().toString().includes(name) || entry.getHashtag().toString().includes(name)
                 );
             });
             return resultList;
@@ -132,7 +122,7 @@ var InMemory = (function(){
             taglist.splice(GeoTag.getCurrentPosition(),1);
         }
     }
-})
+}
 
 
 
@@ -146,6 +136,7 @@ var InMemory = (function(){
  * Als Response wird das ejs-Template ohne Geo Tag Objekte gerendert.
  */
 
+// zur Erzeugung der Einstiegsseite ist vorgegeben (hier sieht man, wie mit EJS eine HTML-Seite erzeugt wird
 app.get('/', function(req, res) {
     let lat = req.body.latitude;
     let long = req.body.latitude;
@@ -171,7 +162,8 @@ app.get('/', function(req, res) {
  */
 
 // TODO: CODE ERGÄNZEN START
-app.post('tagging', function (req, res){
+//zur Speicherung von GeoTags erstellen
+app.post('/tagging', function (req, res){
     let lat = req.body.latitude;
     let long = req.body.longitude;
     let name = req.body.name;
@@ -200,6 +192,7 @@ app.post('tagging', function (req, res){
  */
 
 // TODO: CODE ERGÄNZEN
+//zur Abfrage von GeoTags erstellen
 app.post('/discovery', function(req, res){
     var lat = req.body.hid_lat;
     var long = req.body.hid_long;
@@ -207,10 +200,10 @@ app.post('/discovery', function(req, res){
 
     if (term){
         res.render('gta',{
-            taglist: InMemory.searchBegriff(term),
+            taglist: InMemory.searchName(term),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchBegriff(term))
+            datatags: JSON.stringify(InMemory.searchName(term))
         })
     } else {
         res.render('gta',{

@@ -58,7 +58,7 @@
 			<form id="filter-form" action="/discovery" method="post"></form>
 			<input id="discovery_search" name="search" type="text" placeholder="search item">
 			<input id="hidden_latitude" name="hid_lat" type="hidden" value="<%= latitude%>">
-			<input id="hidden_longitude" name="hid_long" type="hidden" value="<%longitude%>">
+			<input id="hidden_longitude" name="hid_long" type="hidden" value="<%= longitude%>">
 			<input id="discovery_apply" name="apply" type="submit" value="Search">
 
 		</fieldset>
@@ -73,7 +73,7 @@
 		</div>
 
 		<div class="tagmap">
-			<img id="result-img" src="./images/mapview.jpg" alt="a map with locations" data-tags="<%=datatags%>"/>
+			<img id="result-img" src="./images/mapview.jpg" alt="a map with locations" data-tags="<%= datatags%>"/>
 			<div class="caption">Result map</div>
 		</div>
 
@@ -87,7 +87,7 @@
 
 <!-- Load JavaScripts================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script  src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script  src="./javascripts/geotagging.js" ></script>
 </body>
 </html>

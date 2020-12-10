@@ -70,7 +70,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
             onerror("Geolocation is not supported by this browser.");
         }
     };
-    const tags = new Array();
+
     // Auslesen Breitengrad aus der Position
     var getLatitude = function(position) {
         return position.coords.latitude;
@@ -120,28 +120,36 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            tryLocate((position =>{
-                    console.log(position.coords);
-                    const lat = getLatitude(position);
-                    const lon = getLongitude(position);
-                    document.querySelector("#longitude_geotag").value = lon;
-                    document.querySelector("#latitude_geotag").value = lat;
-                    document.querySelector("#hidden_longitude").value = lon;
-                    document.querySelector("#hidden_latitude").value = lat;
-                    let name_tag = "current_position";
-                    let tag = {name: name_tag, longitude: lon, latitude: lat}
-                    tags.push(tag);
-                    console.log("Tag: " + tag);
-                    console.log("Tags: " + tags);
-                    let img_src = getLocationMapSrc(lat, lon, tags, 16);
-                    document.getElementById("result-img").src = img_src;
-                })
-                ,(msg =>{
-                    alert(msg);
-                }))
+            //TODO: Needed?
+            let image = document.getElementById("result-img");
+            let tags = JSON.parse(image.getAttribute("data-tags"));
+            if (document.getElementById("latitude_geotag").value == '' ||
+                document.getElementById("longitude_geotag").value == ''
+                // ||
+                // document.getElementById("latitude_geotag").value == null ||
+                // document.getElementById("longitude_geotag").value == null
+            ) {
+                tryLocate((position =>{
+                        let lat = getLatitude(position);
+                        let lon = getLongitude(position);
+                        document.querySelector("#longitude_geotag").value = lon;
+                        document.querySelector("#latitude_geotag").value = lat;
+                        document.querySelector("#hidden_longitude").value = lon;
+                        document.querySelector("#hidden_latitude").value = lat;
+                        // let img_src = getLocationMapSrc(lat, lon, tags, 16);
+                        // document.getElementById("result-img").src = img_src;
+                        image.src = getLocationMapSrc(lat, lon, tags, 16);
+                    })
+                    ,(msg =>{
+                        alert(msg);
+                    }))
+            }
+            else {
+                let lat = document.getElementById("latitude").value;
+                let lon = document.getElementById("longitude").value;
+                image.src = getLocationMapSrc(lat, lon, tags, 16);
+            }
         }
-
-
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
 
