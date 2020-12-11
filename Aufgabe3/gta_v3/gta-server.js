@@ -69,7 +69,7 @@ function GeoTag (latitude, longitude, name, hashtag){
 // TODO: CODE ERGÄNZEN
 var InMemory = (function (){
     //Private Member
-    var taglist = [];
+    const taglist = new Array();
     var searchRadiusPrivate = function(longitude,latitude,radius){
         var resultList = taglist.filter(function(entry){
             return (
@@ -88,6 +88,7 @@ var InMemory = (function (){
     };
     var addPrivate = function (GeoTag){
          taglist.push(GeoTag);
+         console.log(taglist);
     };
     var deletePrivate = function (GeoTag){
         taglist.splice(GeoTag.getCurrentPosition(),1);
@@ -100,8 +101,8 @@ var InMemory = (function (){
         searchBegriff: function f(term){
             return (searchBegriffPrivate(term));
         },
-        add: function f(GeoTag){
-             taglist.push(GeoTag);
+        add: function (GeoTag){
+             addPrivate(GeoTag);
         },
         delete: function (GeoTag){
             deletePrivate(GeoTag);
@@ -109,6 +110,9 @@ var InMemory = (function (){
         beeep: function(){
             console.log("Hallo, ich bin nur ein test");
             console.log(taglist);
+        },
+        taglist: function(){
+            return taglist;
         }
 
     }
@@ -146,22 +150,22 @@ app.get('/', function(req, res) {
 
 // TODO: CODE ERGÄNZEN START
 app.post('/tagging', function (req, res)  {
-    console.log(req.body);
     let lat = req.body.latitudeGeotag;
     console.log(lat);
     let long = req.body.longitudeGeotag;
     let name = req.body.name_box;
     let hashtag = req.body.hashtag_box;
     let geoTag = new GeoTag(lat,long,name,hashtag);
-    console.log( geoTag);
+
     InMemory().add(geoTag);
-    InMemory().beeep();
+    console.log("Tagliste:");
+    console.log(InMemory().taglist());
 
 
     res.render('gta',{
         taglist: InMemory().searchRadius(lat,long,5),
-        lat: lat,
-        long: long,
+        latitudeGeotag: lat,
+        longitudeGeotag: long,
         datatags: JSON.stringify(InMemory().searchRadius(lat,long,5))
     })
 });
@@ -179,10 +183,14 @@ app.post('/tagging', function (req, res)  {
 
 // TODO: CODE ERGÄNZEN
 app.post('/discovery', function(req, res){
-    var lat = req.body.hid_lat;
-    var long = req.body.hid_long;
+    var lat = req.body.hid_latitude;
+    var long = req.body.hid_longitude;
     var term = req.body.search;
-
+    console.log(lat);
+    console.log(long);
+    console.log(term);
+    res.send("waiting");
+/*
     if (term){
         res.render('gta',{
             taglist: InMemory().searchBegriff(term),
@@ -197,7 +205,7 @@ app.post('/discovery', function(req, res){
             long: long,
             datatags: JSON.stringify(InMemory().searchRadius(lat,long,5))
         })
-    }
+    }*/
 
 });
 /**
