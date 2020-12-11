@@ -120,26 +120,27 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
+
             tryLocate((position =>{
-                    console.log(position.coords);
-                    const lat = getLatitude(position);
-                    const lon = getLongitude(position);
-                    document.querySelector("#longitude_geotag").value = lon;
-                    document.querySelector("#latitude_geotag").value = lat;
-                    document.querySelector("#hidden_longitude").value = lon;
-                    document.querySelector("#hidden_latitude").value = lat;
-                    let name_tag = "current_position";
-                    let tag = {name: name_tag, longitude: lon, latitude: lat}
-                    tags.push(tag);
-                    console.log("Tag: " + tag);
-                    console.log("Tags: " + tags);
-                    let img_src = getLocationMapSrc(lat, lon, tags, 16);
-                    document.getElementById("result-img").src = img_src;
-                })
-                ,(msg =>{
-                    alert(msg);
+                console.log(position.coords);
+                const lat = getLatitude(position);
+                const lon = getLongitude(position);
+                document.querySelector("#longitude_geotag").value = lon;
+                document.querySelector("#latitude_geotag").value = lat;
+                document.querySelector("#hidden_longitude").value = lon;
+                document.querySelector("#hidden_latitude").value = lat;
+                let name_tag = "current_position";
+                let tag = {name: name_tag, longitude: lon, latitude: lat}
+                tags.push(tag);
+                console.log("Tag: " + tag);
+                console.log("Tags: " + tags);
+                let img_src = getLocationMapSrc(lat, lon, tags, 10);
+                document.getElementById("result-img").src = img_src;
+            })
+            ,(msg =>{
+                alert(msg);
                 }))
-        }
+            }
 
 
     }; // ... Ende öffentlicher Teil
