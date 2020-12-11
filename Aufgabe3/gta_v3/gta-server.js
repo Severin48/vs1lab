@@ -4,8 +4,6 @@
  * Verzeichnisbaum implementieren. Dazu müssen die TODOs erledigt werden.
  */
 
-import * as path from "path";
-
 /**
  * Definiere Modul Abhängigkeiten und erzeuge Express app.
  */
@@ -32,21 +30,33 @@ app.set('view engine', 'ejs');
  */
 
 // TODO: CODE ERGÄNZEN
-
-    app.use(express.static(__dirname + "public"));
+app.use(express.static(__dirname + "/public"));
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
  */
 
 // TODO: CODE ERGÄNZEN
-    function GeoTag (latitudeTagging, longitudeTagging, name, hashtag ){
-        this.latitudeTagging = latitudeTagging;
-        this.lonitudeTaging = longitudeTagging;
-        this.name = name;
-        this.hashtag = hashtag;
-}
+function GeoTag (latitude, longitude, name, hashtag){
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.name = name;
+    this.hashtag = hashtag;
 
+    this.getLat = function(){
+        return this.latitude;
+    };
+    this.getLong = function(){
+        return this.longitude;
+    };
+    this.getName = function(){
+        return this.name;
+    };
+    this.getHashtag = function(){
+        return this.hashtag;
+    };
+
+}
 /**
  * Modul für 'In-Memory'-Speicherung von GeoTags mit folgenden Komponenten:
  * - Array als Speicher für Geo Tags.
@@ -57,23 +67,57 @@ app.set('view engine', 'ejs');
  */
 
 // TODO: CODE ERGÄNZEN
-
-    export function arraySpeicher (GeoTag){
+var InMemory = (function (){
+    //Private Member
+    const taglist = new Array();
+    var searchRadiusPrivate = function(longitude,latitude,radius){
+        var resultList = taglist.filter(function(entry){
+            return (
+                (Math.abs(entry.getLatitude() - latitude) < radius) && (Math.abs(entry.getLongitude() - longitude) < radius)
+            )
+        })
+        return resultList;
+    };
+    var searchBegriffPrivate = function(term){
+        var resultList = taglist.filter(function(entry){
+            return (
+                entry.getName().toString().includes(term) || entry.getHashtag().toString().includes(term)
+            )
+        })
+        return resultlist;
+    };
+    var addPrivate = function (GeoTag){
+         taglist.push(GeoTag);
+         console.log(taglist);
+    };
+    var deletePrivate = function (GeoTag){
+        taglist.splice(GeoTag.getCurrentPosition(),1);
+    };
+    return {
+        // öffentlicher Teil
+        searchRadius: function (longitude, latitude, radius) {
+            return (searchRadiusPrivate(longitude, latitude, radius ));
+        },
+        searchBegriff: function f(term){
+            return (searchBegriffPrivate(term));
+        },
+        add: function (GeoTag){
+             addPrivate(GeoTag);
+        },
+        delete: function (GeoTag){
+            deletePrivate(GeoTag);
+        },
+        beeep: function(){
+            console.log("Hallo, ich bin nur ein test");
+            console.log(taglist);
+        },
+        taglist: function(){
+            return taglist;
+        }
 
     }
-    export function searchGeoTags(){
 
-    }
-    export function searchSuchbegriff(){
-
-    }
-    export function addGeoTag(){
-
-    }
-    export function deleteGeoTags(){
-
-    }
-
+})
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -84,8 +128,10 @@ app.set('view engine', 'ejs');
  */
 
 app.get('/', function(req, res) {
+
     res.render('gta', {
-        taglist: []
+        taglist: [],
+
     });
 });
 
@@ -103,13 +149,26 @@ app.get('/', function(req, res) {
  */
 
 // TODO: CODE ERGÄNZEN START
-app.get('/tagging', function (req, res){
-    console.log('YAAAYYYYYY!!');
-    req.body('tag-form');
-    res.render('gta', {
-        taglist: [GeoTag]
-    });
-})
+app.post('/tagging', function (req, res)  {
+    let lat = req.body.latitudeGeotag;
+    console.log(lat);
+    let long = req.body.longitudeGeotag;
+    let name = req.body.name_box;
+    let hashtag = req.body.hashtag_box;
+    let geoTag = new GeoTag(lat,long,name,hashtag);
+
+    InMemory().add(geoTag);
+    console.log("Tagliste:");
+    console.log(InMemory().taglist());
+
+
+    res.render('gta',{
+        taglist: InMemory().searchRadius(lat,long,5),
+        latitudeGeotag: lat,
+        longitudeGeotag: long,
+        datatags: JSON.stringify(InMemory().searchRadius(lat,long,5))
+    })
+});
 /**
  * Route mit Pfad '/discovery' für HTTP 'POST' Requests.
  * (http://expressjs.com/de/4x/api.html#app.post.method)
@@ -123,12 +182,32 @@ app.get('/tagging', function (req, res){
  */
 
 // TODO: CODE ERGÄNZEN
-app.get('/discovery', function(req, res){
-    req.body('filter-form');
-    res.render('gta',{
-        taglist:[GeoTag]
-    });
-})
+app.post('/discovery', function(req, res){
+    var lat = req.body.hid_latitude;
+    var long = req.body.hid_longitude;
+    var term = req.body.search;
+    console.log(lat);
+    console.log(long);
+    console.log(term);
+    res.send("waiting");
+/*
+    if (term){
+        res.render('gta',{
+            taglist: InMemory().searchBegriff(term),
+            lat: lat,
+            long: long,
+            datatags: JSON.stringify(InMemory.searchBegriff(term))
+        })
+    } else {
+        res.render('gta',{
+            taglist: InMemory().searchRadius(lat,long,5),
+            lat: lat,
+            long: long,
+            datatags: JSON.stringify(InMemory().searchRadius(lat,long,5))
+        })
+    }*/
+
+});
 /**
  * Setze Port und speichere in Express.
  */
