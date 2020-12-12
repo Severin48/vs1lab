@@ -69,54 +69,38 @@ function GeoTag (latitude, longitude, name, hashtag){
 // TODO: CODE ERGÄNZEN
 var InMemory = (function (){
     //Private Member
-    const tagList = new Array();
-    var searchRadiusPrivate = function(longitude,latitude,radius){
-        var resultList1 = tagList.filter(function(entry){
-            return (
-                (Math.abs(entry.getLat() - latitude) < radius) && (Math.abs(entry.getLong() - longitude) < radius)
-            )
-        })
-        return resultList1;
-    };
-    var searchBegriffPrivate = function(term){
-        var resultList2 = tagList.filter(function(entry){
-            return (
-                entry.getName().toString().includes(term) || entry.getHashtag().toString().includes(term)
-            )
-        })
-        return resultList2;
-    };
-    var addPrivate = function (GeoTag){
-        tagList.push(GeoTag);
-        console.log(tagList);
-    };
-    var deletePrivate = function (GeoTag){
-        tagList.splice(GeoTag.getCurrentPosition(),1);
-    };
+    var tagList = [];
+
     return {
-        // öffentlicher Teil
-        searchRadius: function (longitude, latitude, radius) {
-            return (searchRadiusPrivate(longitude, latitude, radius ));
+        //Oeffentliche Member
+        searchRadius: function (latitude, longitude, radius) {
+            var resultList = tagList.filter(function (entry) {
+                return (
+                    (Math.abs(entry.getLat() - latitude) < radius) &&
+                    (Math.abs(entry.getLong() - longitude) < radius)
+                );
+            });
+            return resultList;
         },
-        searchBegriff: function f(term){
-            return (searchBegriffPrivate(term));
+
+        searchBegriff: function (term) {
+            var resultList = tagList.filter(function (entry) {
+                return (
+                    entry.getName().toString().includes(term) ||
+                    entry.getHashtag().toString().includes(term)
+                );
+            });
+            return resultList;
         },
-        add: function (GeoTag){
-            addPrivate(GeoTag);
+
+        add: function (GeoTag) {
+            tagList.push(GeoTag);
         },
-        delete: function (GeoTag){
-            deletePrivate(GeoTag);
-        },
-        beeep: function(){
-            console.log("Hallo, ich bin nur ein test");
-            console.log(tagList);
-        },
-        taglist: function(){
-            return tagList;
+
+        delete: function (GeoTag) {
+            tagList.splice(GeoTag.getCurrentPosition(), 1);
         }
-
     }
-
 })();
 
 /**
@@ -156,13 +140,15 @@ app.get('/', function(req, res) {
 // TODO: CODE ERGÄNZEN START
 app.post('/tagging', function (req, res)  {
     let lat = req.body.latitudeGeotag;
-    console.log(lat);
+
     let long = req.body.longitudeGeotag;
     let name = req.body.name_box;
     let hashtag = req.body.hashtag_box;
     let geoTag = new GeoTag(lat,long,name,hashtag);
 
     InMemory.add(geoTag);
+    console.log("JSON:");
+    console.log(JSON.stringify(InMemory.searchRadius(lat,long,5)));
 
 
 
