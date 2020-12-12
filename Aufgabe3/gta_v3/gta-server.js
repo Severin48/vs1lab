@@ -69,29 +69,29 @@ function GeoTag (latitude, longitude, name, hashtag){
 // TODO: CODE ERGÄNZEN
 var InMemory = (function (){
     //Private Member
-    const taglist = new Array();
+    const tagList = new Array();
     var searchRadiusPrivate = function(longitude,latitude,radius){
-        var resultList = taglist.filter(function(entry){
+        var resultList1 = tagList.filter(function(entry){
             return (
-                (Math.abs(entry.getLatitude() - latitude) < radius) && (Math.abs(entry.getLongitude() - longitude) < radius)
+                (Math.abs(entry.getLat() - latitude) < radius) && (Math.abs(entry.getLong() - longitude) < radius)
             )
         })
-        return resultList;
+        return resultList1;
     };
     var searchBegriffPrivate = function(term){
-        var resultList = taglist.filter(function(entry){
+        var resultList2 = tagList.filter(function(entry){
             return (
                 entry.getName().toString().includes(term) || entry.getHashtag().toString().includes(term)
             )
         })
-        return resultlist;
+        return resultList2;
     };
     var addPrivate = function (GeoTag){
-         taglist.push(GeoTag);
-         console.log(taglist);
+        tagList.push(GeoTag);
+        console.log(tagList);
     };
     var deletePrivate = function (GeoTag){
-        taglist.splice(GeoTag.getCurrentPosition(),1);
+        tagList.splice(GeoTag.getCurrentPosition(),1);
     };
     return {
         // öffentlicher Teil
@@ -102,22 +102,23 @@ var InMemory = (function (){
             return (searchBegriffPrivate(term));
         },
         add: function (GeoTag){
-             addPrivate(GeoTag);
+            addPrivate(GeoTag);
         },
         delete: function (GeoTag){
             deletePrivate(GeoTag);
         },
         beeep: function(){
             console.log("Hallo, ich bin nur ein test");
-            console.log(taglist);
+            console.log(tagList);
         },
         taglist: function(){
-            return taglist;
+            return tagList;
         }
 
     }
 
-})
+})();
+
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -128,9 +129,13 @@ var InMemory = (function (){
  */
 
 app.get('/', function(req, res) {
-
+    let lat = req.body.latitudeGeotag;
+    let long = req.body.longitudeGeotag;
     res.render('gta', {
         taglist: [],
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
 
     });
 });
@@ -157,16 +162,15 @@ app.post('/tagging', function (req, res)  {
     let hashtag = req.body.hashtag_box;
     let geoTag = new GeoTag(lat,long,name,hashtag);
 
-    InMemory().add(geoTag);
-    console.log("Tagliste:");
-    console.log(InMemory().taglist());
+    InMemory.add(geoTag);
+
 
 
     res.render('gta',{
-        taglist: InMemory().searchRadius(lat,long,5),
-        latitudeGeotag: lat,
-        longitudeGeotag: long,
-        datatags: JSON.stringify(InMemory().searchRadius(lat,long,5))
+        taglist: InMemory.searchRadius(lat,long,5),
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
     })
 });
 /**
@@ -189,23 +193,23 @@ app.post('/discovery', function(req, res){
     console.log(lat);
     console.log(long);
     console.log(term);
-    res.send("waiting");
-/*
+
+
     if (term){
         res.render('gta',{
-            taglist: InMemory().searchBegriff(term),
+            taglist: InMemory.searchBegriff(term),
             lat: lat,
             long: long,
             datatags: JSON.stringify(InMemory.searchBegriff(term))
         })
     } else {
         res.render('gta',{
-            taglist: InMemory().searchRadius(lat,long,5),
+            taglist: InMemory.searchRadius(lat,long,5),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory().searchRadius(lat,long,5))
+            datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
         })
-    }*/
+    }
 
 });
 /**
@@ -226,4 +230,3 @@ var server = http.createServer(app);
  */
 
 server.listen(port);
-
