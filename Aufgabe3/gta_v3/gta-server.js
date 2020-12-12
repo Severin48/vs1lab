@@ -99,63 +99,6 @@ let InMemory = (function (){
     }
 })();
 
-// function inMemory(){
-//     let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
-//     taglist.push(tag);
-// }
-
-// function searchRadius(lon, lat, radius) {
-//
-//     let inRadius = [];
-//     for (let tag in taglist){
-//         if ((tag.longitude <= lon + radius || tag.longitude > lon - radius) && (tag.latitude <= lat + radius || tag.latitude > lat - radius)) {
-//             //found
-//             inRadius.push(tag);
-//         }
-//     }
-//     return inRadius;
-// }
-//
-// function addGeoTag(){
-//     let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
-//     taglist.push(tag);
-// }
-//
-// function deleteGeoTag(tag){
-//     taglist.splice(taglist.indexOf(tag), 1);
-// }
-
-var InMemory = function(){
-    var tagList = [];
-    return {
-        searchRadius: function (latitude, longitude, radius){
-            var resultList = tagList.filter(function (entry){
-                return (
-                    (Math.abs(latitude - entry.getLatitude()) <= radius) &&
-                    (Math.abs(longitude - entry.getLongitude()) <= radius)
-                );
-            });
-            return resultList;
-        },
-        searchName: function (name){
-            var resultList = tagList.filter(function (entry){
-                return (
-                    entry.getName().toString().includes(name) || entry.getHashtag().toString().includes(name)
-                );
-            });
-            return resultList;
-        },
-        add: function (GeoTag){
-            tagList.push;
-        },
-        delete: function (GeoTag){
-            tagList.splice(GeoTag.getCurrentPosition(),1);
-        }
-    }
-}
-
-
-
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
@@ -195,7 +138,6 @@ app.get('/', function(req, res) {
 // TODO: CODE ERGÄNZEN START
 app.post('/tagging', function (req, res)  {
     let lat = req.body.latitudeGeotag;
-
     let long = req.body.longitudeGeotag;
     let name = req.body.name_geotag;
     let hashtag = req.body.hashtag_geotag;
