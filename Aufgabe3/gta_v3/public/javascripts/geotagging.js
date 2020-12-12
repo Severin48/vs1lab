@@ -146,7 +146,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
                 imageNode.src = getLocationMapSrc(lat, long, tags , 5)
             }
         }
-
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
 
@@ -160,6 +159,5 @@ $(function() {
     {
         gtaLocator.updateLocation();
     }
-
 
 });

@@ -4,12 +4,12 @@
  * Verzeichnisbaum implementieren. Dazu müssen die TODOs erledigt werden.
  */
 
+
 /**
  * Definiere Modul Abhängigkeiten und erzeuge Express app.
  */
 
 var http = require('http');
-//var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
@@ -17,9 +17,7 @@ var express = require('express');
 var app;
 app = express();
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
+app.use(bodyParser.urlencoded({extended: false}));
 
 // Setze ejs als View Engine
 app.set('view engine', 'ejs');
@@ -101,6 +99,64 @@ let InMemory = (function (){
     }
 })();
 
+// function inMemory(){
+//     let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
+//     taglist.push(tag);
+// }
+
+// function searchRadius(lon, lat, radius) {
+//
+//     let inRadius = [];
+//     for (let tag in taglist){
+//         if ((tag.longitude <= lon + radius || tag.longitude > lon - radius) && (tag.latitude <= lat + radius || tag.latitude > lat - radius)) {
+//             //found
+//             inRadius.push(tag);
+//         }
+//     }
+//     return inRadius;
+// }
+//
+// function addGeoTag(){
+//     let tag = new GeoTag(this.longitude, this.latitude, this.name, this.hashtag);
+//     taglist.push(tag);
+// }
+//
+// function deleteGeoTag(tag){
+//     taglist.splice(taglist.indexOf(tag), 1);
+// }
+
+var InMemory = function(){
+    var tagList = [];
+    return {
+        searchRadius: function (latitude, longitude, radius){
+            var resultList = tagList.filter(function (entry){
+                return (
+                    (Math.abs(latitude - entry.getLatitude()) <= radius) &&
+                    (Math.abs(longitude - entry.getLongitude()) <= radius)
+                );
+            });
+            return resultList;
+        },
+        searchName: function (name){
+            var resultList = tagList.filter(function (entry){
+                return (
+                    entry.getName().toString().includes(name) || entry.getHashtag().toString().includes(name)
+                );
+            });
+            return resultList;
+        },
+        add: function (GeoTag){
+            tagList.push;
+        },
+        delete: function (GeoTag){
+            tagList.splice(GeoTag.getCurrentPosition(),1);
+        }
+    }
+}
+
+
+
+
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -110,6 +166,7 @@ let InMemory = (function (){
  * Als Response wird das ejs-Template ohne Geo Tag Objekte gerendert.
  */
 
+// zur Erzeugung der Einstiegsseite ist vorgegeben (hier sieht man, wie mit EJS eine HTML-Seite erzeugt wird
 app.get('/', function(req, res) {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
@@ -211,3 +268,4 @@ var server = http.createServer(app);
  */
 
 server.listen(port);
+

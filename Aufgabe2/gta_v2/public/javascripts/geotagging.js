@@ -70,7 +70,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
             onerror("Geolocation is not supported by this browser.");
         }
     };
-
+    const tags = new Array();
     // Auslesen Breitengrad aus der Position
     var getLatitude = function(position) {
         return position.coords.latitude;
@@ -158,6 +158,5 @@ $(function() {
     {
         gtaLocator.updateLocation();
     }
-
 
 });
