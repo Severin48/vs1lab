@@ -40,10 +40,10 @@
 				<input id="longitude_geotag" type="text" name="longitudeGeotag" placeholder="Longitude of your place"
 					   pattern="\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$" required value="<%= long %>"/>
 				<label>Name:</label>
-				<input id="name_geotag" type="text" name="name_box" placeholder="Your name" maxlength="10"
+				<input id="name_geotag" type="text" name="name_box1" placeholder="Your name" maxlength="10"
 					   required/>
 				<label>Hashtag:</label>
-				<input id="hashtag_geotag" type="text" name="hashtag_box"
+				<input id="hashtag_geotag" type="text" name="hashtag_box1"
 					   placeholder="# + max. 10 letters" maxlength="11" pattern="\#(w*)">
 				<input id="submit_geotag" type="submit" value="Submit" />
 				<!-- ############### Aufgabe1a Form1 Ende -->
@@ -58,7 +58,7 @@
 		<fieldset>
 			<legend>Filter by Searchterm</legend>
 			<form id="filter-form" action="/discovery" method="post">
-			<input id="discovery_search" name="search" type="text" placeholder="search item"/>
+			<input id="discovery_search" name="search1" type="text" placeholder="search item"/>
 			<input id="hidden_latitude" name="hid_latitude" type="hidden" value="<%= lat %>"/>
 			<input id="hidden_longitude" name="hid_longitude" type="hidden" value="<%= long %>"/>
 			<input id="discovery_apply" name="apply" type="submit" value="Search">

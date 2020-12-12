@@ -142,8 +142,8 @@ app.post('/tagging', function (req, res)  {
     let lat = req.body.latitudeGeotag;
 
     let long = req.body.longitudeGeotag;
-    let name = req.body.name_box;
-    let hashtag = req.body.hashtag_box;
+    let name = req.body.name_box1;
+    let hashtag = req.body.hashtag_box1;
     let geoTag = new GeoTag(lat,long,name,hashtag);
 
     InMemory.add(geoTag);
@@ -175,10 +175,7 @@ app.post('/tagging', function (req, res)  {
 app.post('/discovery', function(req, res){
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
-    var term = req.body.search;
-    console.log(lat);
-    console.log(long);
-    console.log(term);
+    var term = req.body.search1;
 
 
     if (term){
