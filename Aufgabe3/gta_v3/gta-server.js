@@ -29,14 +29,23 @@ app.set('view engine', 'ejs');
  * Teste das Ergebnis im Browser unter 'http://localhost:3000/'.
  */
 
-// TODO: CODE ERGÄNZEN
+app.use(express.static(__dirname + "/public"));
 
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
  */
 
-// TODO: CODE ERGÄNZEN
+function GeoTag(latitude_geotag, longitude_geotag, name_geotag, hashtag_geotag) {
+    this.latitude_geotag = latitude_geotag;
+    this.longitude_geotag = longitude_geotag;
+    this.name_geotag = name_geotag;
+    this.hashtag_geotag = hashtag_geotag;
+
+    // this.func = function() {
+    //     return sth;
+    // };
+}
 
 /**
  * Modul für 'In-Memory'-Speicherung von GeoTags mit folgenden Komponenten:
@@ -47,7 +56,11 @@ app.set('view engine', 'ejs');
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-// TODO: CODE ERGÄNZEN
+let inMemory = {
+
+    array: [],
+
+}
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
