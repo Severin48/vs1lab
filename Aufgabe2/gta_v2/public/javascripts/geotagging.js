@@ -120,28 +120,31 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            tryLocate((position =>{
-                    console.log(position.coords);
-                    const lat = getLatitude(position);
-                    const lon = getLongitude(position);
-                    document.querySelector("#longitude_geotag").value = lon;
-                    document.querySelector("#latitude_geotag").value = lat;
-                    document.querySelector("#hidden_longitude").value = lon;
-                    document.querySelector("#hidden_latitude").value = lat;
-                    let name_tag = "current_position";
-                    let tag = {name: name_tag, longitude: lon, latitude: lat}
-                    tags.push(tag);
-                    console.log("Tag: " + tag);
-                    console.log("Tags: " + tags);
-                    let img_src = getLocationMapSrc(lat, lon, tags, 14);
-                    document.getElementById("result-img").src = img_src;
-                })
-                ,(msg =>{
-                    alert(msg);
-                }))
-        }
+            let imageNode = document.getElementById("result-img");
+            let tags = JSON.parse(imageNode.getAttribute("data-tags"));
 
+            if (document.getElementById("latitude_geotag").value === '' || document.getElementById("longitude_geotag").value === '') {
+                console.log("trying to locate....");
+                tryLocate((position => {
 
+                        const lat = getLatitude(position);
+                        const lon = getLongitude(position);
+                        document.querySelector("#longitude_geotag").value = lon;
+                        document.querySelector("#latitude_geotag").value = lat;
+                        document.querySelector("#hidden_longitude").value = lon;
+                        document.querySelector("#hidden_latitude").value = lat;
+                        let img_src = getLocationMapSrc(lat, lon, tags, 10);
+                        document.getElementById("result-img").src = img_src;
+                    })
+                    , (msg => {
+                        alert(msg);
+                    }))
+            } else{
+                console.log("got data, no try")
+                let lat = document.getElementById("latitude_geotag").value;
+                let lon = document.getElementById("longitude_geotag").value;
+                imageNode.src = getLocationMapSrc(lat, lon, tags, 5);
+                }}
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
 
@@ -153,10 +156,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 $(function() {
     $(document).ready()
     {
-        gtaLocator.updateLocation();
-    }
-    document.getElementById("submit_geotag").onclick = function (event){
-
         gtaLocator.updateLocation();
     }
 

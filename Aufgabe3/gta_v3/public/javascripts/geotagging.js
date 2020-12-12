@@ -120,34 +120,30 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            //TODO: Needed?
-            let image = document.getElementById("result-img");
-            let tags = JSON.parse(image.getAttribute("data-tags"));
-            if (document.getElementById("latitude_geotag").value == '' ||
-                document.getElementById("longitude_geotag").value == ''
-                // ||
-                // document.getElementById("latitude_geotag").value == null ||
-                // document.getElementById("longitude_geotag").value == null
-            ) {
-                tryLocate((position =>{
-                        let lat = getLatitude(position);
-                        let lon = getLongitude(position);
-                        document.querySelector("#longitude_geotag").value = lon;
-                        document.querySelector("#latitude_geotag").value = lat;
+            let imageNode = document.getElementById("result-img");
+            let tags = JSON.parse(imageNode.getAttribute("data-tags"));
+            console.log(tags);
+            if (document.getElementById("latitude_geotag").value === '' || document.getElementById("longitude_geotag").value === '') {
+                tryLocate((position => {
+
+                        const lat = getLatitude(position);
+                        const lon = getLongitude(position);
+
                         document.querySelector("#hidden_longitude").value = lon;
                         document.querySelector("#hidden_latitude").value = lat;
-                        // let img_src = getLocationMapSrc(lat, lon, tags, 16);
-                        // document.getElementById("result-img").src = img_src;
-                        image.src = getLocationMapSrc(lat, lon, tags, 16);
+                        document.getElementById("longitude_geotag").value = lon;
+                        document.getElementById("latitude_geotag").value = lat;
+                        imageNode.src = getLocationMapSrc(lat, lon, tags, 5);
+
+
                     })
-                    ,(msg =>{
+                    , (msg => {
                         alert(msg);
                     }))
-            }
-            else {
-                let lat = document.getElementById("latitude").value;
-                let lon = document.getElementById("longitude").value;
-                image.src = getLocationMapSrc(lat, lon, tags, 16);
+            } else {
+                let lat = document.getElementById("latitude_geotag").value;
+                let long = document.getElementById("longitude_geotag").value;
+                imageNode.src = getLocationMapSrc(lat, long, tags , 5)
             }
         }
     }; // ... Ende öffentlicher Teil
@@ -161,10 +157,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 $(function() {
     $(document).ready()
     {
-        gtaLocator.updateLocation();
-    }
-    document.getElementById("submit_geotag").onclick = function (event){
-
         gtaLocator.updateLocation();
     }
 
