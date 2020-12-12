@@ -69,55 +69,40 @@ function GeoTag (latitude, longitude, name, hashtag){
 // TODO: CODE ERGÄNZEN
 var InMemory = (function (){
     //Private Member
-    const taglist = new Array();
-    var searchRadiusPrivate = function(longitude,latitude,radius){
-        var resultList = taglist.filter(function(entry){
-            return (
-                (Math.abs(entry.getLatitude() - latitude) < radius) && (Math.abs(entry.getLongitude() - longitude) < radius)
-            )
-        })
-        return resultList;
-    };
-    var searchBegriffPrivate = function(term){
-        var resultList = taglist.filter(function(entry){
-            return (
-                entry.getName().toString().includes(term) || entry.getHashtag().toString().includes(term)
-            )
-        })
-        return resultlist;
-    };
-    var addPrivate = function (GeoTag){
-         taglist.push(GeoTag);
-         console.log(taglist);
-    };
-    var deletePrivate = function (GeoTag){
-        taglist.splice(GeoTag.getCurrentPosition(),1);
-    };
+    var tagList = [];
+
     return {
-        // öffentlicher Teil
-        searchRadius: function (longitude, latitude, radius) {
-            return (searchRadiusPrivate(longitude, latitude, radius ));
+        //Oeffentliche Member
+        searchRadius: function (latitude, longitude, radius) {
+            var resultList = tagList.filter(function (entry) {
+                return (
+                    (Math.abs(entry.getLat() - latitude) < radius) &&
+                    (Math.abs(entry.getLong() - longitude) < radius)
+                );
+            });
+            return resultList;
         },
-        searchBegriff: function f(term){
-            return (searchBegriffPrivate(term));
+
+        searchBegriff: function (term) {
+            var resultList = tagList.filter(function (entry) {
+                return (
+                    entry.getName().toString().includes(term) ||
+                    entry.getHashtag().toString().includes(term)
+                );
+            });
+            return resultList;
         },
-        add: function (GeoTag){
-             addPrivate(GeoTag);
+
+        add: function (GeoTag) {
+            tagList.push(GeoTag);
         },
-        delete: function (GeoTag){
-            deletePrivate(GeoTag);
-        },
-        beeep: function(){
-            console.log("Hallo, ich bin nur ein test");
-            console.log(taglist);
-        },
-        taglist: function(){
-            return taglist;
+
+        delete: function (GeoTag) {
+            tagList.splice(GeoTag.getCurrentPosition(), 1);
         }
-
     }
+})();
 
-})
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -128,9 +113,13 @@ var InMemory = (function (){
  */
 
 app.get('/', function(req, res) {
-
+    let lat = req.body.latitudeGeotag;
+    let long = req.body.longitudeGeotag;
     res.render('gta', {
         taglist: [],
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
 
     });
 });
@@ -151,22 +140,23 @@ app.get('/', function(req, res) {
 // TODO: CODE ERGÄNZEN START
 app.post('/tagging', function (req, res)  {
     let lat = req.body.latitudeGeotag;
-    console.log(lat);
+
     let long = req.body.longitudeGeotag;
     let name = req.body.name_box;
     let hashtag = req.body.hashtag_box;
     let geoTag = new GeoTag(lat,long,name,hashtag);
 
-    InMemory().add(geoTag);
-    console.log("Tagliste:");
-    console.log(InMemory().taglist());
+    InMemory.add(geoTag);
+    console.log("JSON:");
+    console.log(JSON.stringify(InMemory.searchRadius(lat,long,5)));
+
 
 
     res.render('gta',{
-        taglist: InMemory().searchRadius(lat,long,5),
-        latitudeGeotag: lat,
-        longitudeGeotag: long,
-        datatags: JSON.stringify(InMemory().searchRadius(lat,long,5))
+        taglist: InMemory.searchRadius(lat,long,5),
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
     })
 });
 /**
@@ -189,23 +179,23 @@ app.post('/discovery', function(req, res){
     console.log(lat);
     console.log(long);
     console.log(term);
-    res.send("waiting");
-/*
+
+
     if (term){
         res.render('gta',{
-            taglist: InMemory().searchBegriff(term),
+            taglist: InMemory.searchBegriff(term),
             lat: lat,
             long: long,
             datatags: JSON.stringify(InMemory.searchBegriff(term))
         })
     } else {
         res.render('gta',{
-            taglist: InMemory().searchRadius(lat,long,5),
+            taglist: InMemory.searchRadius(lat,long,5),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory().searchRadius(lat,long,5))
+            datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
         })
-    }*/
+    }
 
 });
 /**

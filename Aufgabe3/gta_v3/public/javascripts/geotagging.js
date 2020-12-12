@@ -131,13 +131,10 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
                         document.querySelector("#hidden_longitude").value = lon;
                         document.querySelector("#hidden_latitude").value = lat;
-                        let name_tag = "current_position";
-                        let tag = {name: name_tag, longitude: lon, latitude: lat}
-                        console.log(tag);
-                        tags.push(tag);
-                        console.log(tags);
-                        let img_src = getLocationMapSrc(lat, lon, tags, 5);
-                        document.getElementById("result-img").src = getLocationMapSrc(lat, lon, tags, 5);
+                        document.getElementById("longitude_geotag").value = lon;
+                        document.getElementById("latitude_geotag").value = lat;
+                        imageNode.src = getLocationMapSrc(lat, lon, tags, 5);
+
 
                     })
                     , (msg => {
