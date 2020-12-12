@@ -122,29 +122,31 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         updateLocation: function() {
             let imageNode = document.getElementById("result-img");
             let tags = JSON.parse(imageNode.getAttribute("data-tags"));
-
+            console.log(tags);
             if (document.getElementById("latitude_geotag").value === '' || document.getElementById("longitude_geotag").value === '') {
-                console.log("trying to locate....");
                 tryLocate((position => {
 
                         const lat = getLatitude(position);
                         const lon = getLongitude(position);
-                        document.querySelector("#longitude_geotag").value = lon;
-                        document.querySelector("#latitude_geotag").value = lat;
+
                         document.querySelector("#hidden_longitude").value = lon;
                         document.querySelector("#hidden_latitude").value = lat;
-                        let img_src = getLocationMapSrc(lat, lon, tags, 10);
-                        document.getElementById("result-img").src = img_src;
+                        document.getElementById("longitude_geotag").value = lon;
+                        document.getElementById("latitude_geotag").value = lat;
+                        imageNode.src = getLocationMapSrc(lat, lon, tags, 5);
+
+
                     })
                     , (msg => {
                         alert(msg);
                     }))
-            } else{
-                console.log("got data, no try")
+            } else {
                 let lat = document.getElementById("latitude_geotag").value;
-                let lon = document.getElementById("longitude_geotag").value;
-                imageNode.src = getLocationMapSrc(lat, lon, tags, 5);
-                }}
+                let long = document.getElementById("longitude_geotag").value;
+                imageNode.src = getLocationMapSrc(lat, long, tags , 5)
+            }
+        }
+
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
 
