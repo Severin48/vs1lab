@@ -67,30 +67,28 @@ function GeoTag (latitude, longitude, name, hashtag){
  */
 
 // TODO: CODE ERGÄNZEN
-var InMemory = (function (){
-    //Private Member
-    var tagList = [];
+let InMemory = (function (){
+    let tagList = [];
 
     return {
-        //Oeffentliche Member
         searchRadius: function (latitude, longitude, radius) {
-            var resultList = tagList.filter(function (entry) {
+            let matchRadius = tagList.filter(function (entry) {
                 return (
-                    (Math.abs(entry.getLat() - latitude) < radius) &&
-                    (Math.abs(entry.getLong() - longitude) < radius)
+                    (Math.abs(entry.getLat() - latitude) <= radius) &&
+                    (Math.abs(entry.getLong() - longitude) <= radius)
                 );
             });
-            return resultList;
+            return matchRadius;
         },
 
-        searchBegriff: function (term) {
-            var resultList = tagList.filter(function (entry) {
+        searchTerm: function (term) {
+            let matchTerm = tagList.filter(function (entry) {
                 return (
                     entry.getName().toString().includes(term) ||
                     entry.getHashtag().toString().includes(term)
                 );
             });
-            return resultList;
+            return matchTerm;
         },
 
         add: function (GeoTag) {
@@ -142,8 +140,8 @@ app.post('/tagging', function (req, res)  {
     let lat = req.body.latitudeGeotag;
 
     let long = req.body.longitudeGeotag;
-    let name = req.body.name_box1;
-    let hashtag = req.body.hashtag_box1;
+    let name = req.body.name_geotag;
+    let hashtag = req.body.hashtag_geotag;
     let geoTag = new GeoTag(lat,long,name,hashtag);
 
     InMemory.add(geoTag);
@@ -175,15 +173,15 @@ app.post('/tagging', function (req, res)  {
 app.post('/discovery', function(req, res){
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
-    var term = req.body.search1;
+    var term = req.body.discovery_search;
 
 
     if (term){
         res.render('gta',{
-            taglist: InMemory.searchBegriff(term),
+            taglist: InMemory.searchTerm(term),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchBegriff(term))
+            datatags: JSON.stringify(InMemory.searchTerm(term))
         })
     } else {
         res.render('gta',{
