@@ -29,6 +29,7 @@ GEOLOCATIONAPI = {
     }
 };
 
+//
 // Die echte API ist diese.
 // Falls es damit Probleme gibt, kommentieren Sie die Zeile aus.
 GEOLOCATIONAPI = navigator.geolocation;
