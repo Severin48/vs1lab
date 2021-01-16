@@ -13,8 +13,9 @@ var http = require('http');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
+var credentials = require("./credentials.js");
 var cookies = require('cookie-parser');
-var credentials = require("../../Beispiele/nodejs_cookies/credentials");
+
 
 var app;
 app = express();
@@ -123,6 +124,12 @@ app.get('/', function(req, res) {
         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
 
     });
+    //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
+    //Dann res.send(); um Cookies zu senden
+    //console.log(req.cookies);
+    //console.log(req.signedCookies);
+    //var val = req.signedCookies. --name vom cookie--
+    //Cookie löschen: res.clearCookie(name)
 });
 
 /**

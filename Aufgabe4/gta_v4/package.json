@@ -10,5 +10,8 @@
     "ejs": ">=2.5.5",
     "express": "^4.14.1",
     "morgan": ">=1.9.1"
+  },
+  "devDependencies": {
+    "cookie-parser": "^1.4.5"
   }
 }
