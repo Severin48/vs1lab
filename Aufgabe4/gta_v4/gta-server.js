@@ -95,9 +95,6 @@ let InMemory = (function (){
 
         delete: function (GeoTag) {
             tagList.splice(GeoTag.getCurrentPosition(), 1);
-        },
-        getAll: function () {
-            return tagList;
         }
     }
 })();
@@ -113,18 +110,15 @@ let InMemory = (function (){
  */
 
 // zur Erzeugung der Einstiegsseite ist vorgegeben (hier sieht man, wie mit EJS eine HTML-Seite erzeugt wird
-
 app.get('/', function(req, res) {
-    // let lat = req.body.latitudeGeotag;
-    // let long = req.body.longitudeGeotag;
-    var all = InMemory.getAll();
-        res.render('gta', {
-        taglist: all,
-            lat: '',
-            long: '',
-        // lat: lat,
-        // long: long,
-        datatags: JSON.stringify(all)
+    let lat = req.body.latitudeGeotag;
+    let long = req.body.longitudeGeotag;
+    res.render('gta', {
+        taglist: [],
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+
     });
 });
 
