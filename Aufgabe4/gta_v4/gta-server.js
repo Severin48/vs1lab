@@ -13,9 +13,12 @@ var http = require('http');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
+var cookies = require('cookie-parser');
+var credentials = require("../../Beispiele/nodejs_cookies/credentials");
 
 var app;
 app = express();
+app.use(cookies(credentials.cookieSecret));
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 
