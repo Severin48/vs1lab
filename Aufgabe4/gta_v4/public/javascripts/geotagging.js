@@ -154,10 +154,22 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * angegebene Funktion aufgerufen. An dieser Stelle beginnt die eigentliche Arbeit
  * des Skripts.
  */
-$(function() {
-    $(document).ready()
-    {
+let ajax = new XMLHttpRequest();
+
+ajax.onreadystatechange = function () {
+    if (ajax.readyState == 4) {
         gtaLocator.updateLocation();
     }
+};
 
-});
+ajax.open("GET", "", true); //URL einsetzen || "POST" für Speichern
+
+ajax.send(null);
+
+// $(function() {
+//     $(document).ready()
+//     {
+//         gtaLocator.updateLocation();
+//     }
+//
+// });
