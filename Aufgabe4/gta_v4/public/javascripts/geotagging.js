@@ -9,6 +9,9 @@
 console.log("The script is going to start...");
 
 // Es folgen einige Deklarationen, die aber noch nicht ausgeführt werden ...
+let ajax = new XMLHttpRequest();
+let submitTag = document.getElementById("submit_button");
+let searchTag = document.getElementById("search_button");
 
 // Hier wird die verwendete API für Geolocations gewählt
 // Die folgende Deklaration ist ein 'Mockup', das immer funktioniert und eine fixe Position liefert.
@@ -154,22 +157,55 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * angegebene Funktion aufgerufen. An dieser Stelle beginnt die eigentliche Arbeit
  * des Skripts.
  */
-let ajax = new XMLHttpRequest();
 
-ajax.onreadystatechange = function () {
-    if (ajax.readyState == 4) {
+
+submitTag.addEventListener("click", function() {
+    console.log("hinzufügen");
+
+    ajax.open("POST", "/geotags", true);
+    ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.responseType = "json";
+
+    let lat = document.getElementById("latitude").value;
+    let lon = document.getElementById("longitude").value;
+    let name = document.getElementById("name").value;
+    let hashtag = document.getElementById("hashtag").value;
+    ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
+});
+
+searchTag.addEventListener("click", function() {
+    console.log("suchen");
+    let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
+    let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
+    let termURL = "&term=" + document.getElementById("search term").value;
+
+    ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
+    ajax.responseType = "json";
+    ajax.send(null);
+});
+
+ajax.onreadystatechange = function() {
+
+    if(ajax.readyState == 4){
+        console.log(ajax.response);
+        let resultArray = ajax.response;
+        let results = "";
+
+        resultArray.forEach(function(tag){
+            results += "<li>";
+            results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
+            results += "</li>";
+        });
+        $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+        $("#results").html(results);
         gtaLocator.updateLocation();
     }
-};
+}
 
-ajax.open("GET", "", true); //URL einsetzen || "POST" für Speichern
+$(function () {
+    gtaLocator.updateLocation();
+});
 
-ajax.send(null);
-
-// $(function() {
-//     $(document).ready()
-//     {
-//         gtaLocator.updateLocation();
-//     }
+// ajax.open("GET", "", true); //URL einsetzen || "POST" für Speichern
 //
-// });
+// ajax.send(null);

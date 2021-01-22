@@ -13,18 +13,22 @@ var http = require('http');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
-var credentials = require("./credentials.js");
-var cookies = require('cookie-parser');
+// var credentials = require("./credentials.js");
+// var cookies = require('cookie-parser');
 
 
 var app;
-app = express();
-app.use(cookies(credentials.cookieSecret));
+app = express(); //npm install express@">=3.0.0 <4.0.0" --save
+//var app = connect(); //npm install connect https://github.com/senchalabs/connect#middleware
+// app.use(cookies(credentials.cookieSecret));
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json());
 
 // Setze ejs als View Engine
 app.set('view engine', 'ejs');
+
+app.use(express.static(__dirname + "/public"));
 
 /**
  * Konfiguriere den Pfad für statische Dateien.
@@ -179,28 +183,72 @@ app.post('/tagging', function (req, res)  {
  */
 
 // TODO: CODE ERGÄNZEN
-app.post('/discovery', function(req, res){
+app.post('/discovery', function(req, res) {
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
     var term = req.body.discovery_search;
 
 
-    if (term){
-        res.render('gta',{
+    if (term) {
+        res.render('gta', {
             taglist: InMemory.searchTerm(term),
             lat: lat,
             long: long,
             datatags: JSON.stringify(InMemory.searchTerm(term))
         })
     } else {
-        res.render('gta',{
-            taglist: InMemory.searchRadius(lat,long,5),
+        res.render('gta', {
+            taglist: InMemory.searchRadius(lat, long, 5),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+            datatags: JSON.stringify(InMemory.searchRadius(lat, long, 5))
         })
-    }
+    }});
 
+app.post('/geotags', function(req, res){
+    let id = InMemory.add(req.body);
+    res.header('Location', req.url + "/" + id);
+    res.status(201).json(InMemory.getTagList());
+});
+
+app.get('/geotags', function(req, res){
+    let stdRadius = 10;
+    let lat = req.query.lat;
+    let lon = req.query.lon;
+    let term = req.query.term;
+
+    if(term == undefined){
+        res.status(200).json(InMemory.getTagList());
+    } else if(term == ""){
+        res.status(200).json(InMemory.searchByRadius(lat, lon, stdRadius));
+    } else {
+        res.status(200).json(InMemory.searchByTerm(term));
+    }
+});
+
+app.get('/geotags/:id',function(req, res){
+    let id = req.params.id;
+    res.status(200).json(InMemory.searchById(id)[0]);
+});
+
+app.put('/geotags/:id',function(req, res){
+    let tag = InMemory.searchById(req.params.id)[0];
+    tag.latitude = req.body.latitude ? req.body.latitude : tag.latitude;
+    tag.longitude = req.body.longitude ? req.body.longitude : tag.longitude;
+    tag.name = req.body.name ? req.body.name : tag.name;
+    tag.hashtag = req.body.hashtag ? req.body.hashtag : tag.hashtag;
+    tag.id = req.params.id;
+    res.status(201).json(tag);
+});
+
+app.delete('/geotags/:id',function(req, res){
+    if (InMemory.searchById(req.params.id)[0]) {
+        InMemory.remove(InMemory.searchById(req.params.id)[0]);
+        res.status(201).json(InMemory.getTagList());
+    } else {
+        res.statusCode = 404;
+        res.send("ID NOT FOUND");
+    }
 });
 /**
  * Setze Port und speichere in Express.
