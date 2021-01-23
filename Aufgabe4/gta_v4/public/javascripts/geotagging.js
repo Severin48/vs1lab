@@ -10,8 +10,8 @@ console.log("The script is going to start...");
 
 // Es folgen einige Deklarationen, die aber noch nicht ausgeführt werden ...
 let ajax = new XMLHttpRequest();
-let submitTag = document.getElementById("submit_button");
-let searchTag = document.getElementById("search_button");
+let submitTag = document.getElementById("submit_geotag");
+let searchTag = document.getElementById("discovery_apply");
 
 var GeoTag = function (lat, lon, name, hashtag) {
     this.latitude = lat;
@@ -167,37 +167,33 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  */
 
 if (submitTag) {
-    $("#tag-form").submit(function (event) {
+    submitTag.addEventListener("click", function(event) {
         event.preventDefault();
-        submitTag.addEventListener("click", function() {
-            console.log("Adding")
-            ajax.open("POST", "/geotags", true);
-            ajax.setRequestHeader("Content-Type", "application/json");
-            ajax.responseType = "json";
+        console.log("Adding ====================================================")
+        ajax.open("POST", "/geotags", true);
+        ajax.setRequestHeader("Content-Type", "application/json");
+        ajax.responseType = "json";
 
-            let lat = document.getElementById("latitude").value;
-            let lon = document.getElementById("longitude").value;
-            let name = document.getElementById("name").value;
-            let hashtag = document.getElementById("hashtag").value;
-            ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
-        });
-    })
+        let lat = document.getElementById("latitude").value;
+        let lon = document.getElementById("longitude").value;
+        let name = document.getElementById("name").value;
+        let hashtag = document.getElementById("hashtag").value;
+        ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
+    });
 }
 
 if (searchTag) {
-    $("#filter-form").submit(function (event) {
+    searchTag.addEventListener("click", function(event) {
         event.preventDefault();
-        searchTag.addEventListener("click", function() {
-            console.log("Searching");
-            let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
-            let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
-            let termURL = "&term=" + document.getElementById("discovery_search").value; //DONE corrected here
+        console.log("Searching Adding ====================================================");
+        let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
+        let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
+        let termURL = "&term=" + document.getElementById("discovery_search").value; //DONE corrected here
 
-            ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
-            ajax.responseType = "json";
-            ajax.send(null);
-        }, true);
-    });
+        ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
+        ajax.responseType = "json";
+        ajax.send(null);
+    }, true);
 }
 
 
