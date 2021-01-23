@@ -131,30 +131,23 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            let imageNode = document.getElementById("result-img");
-            let tags = JSON.parse(imageNode.getAttribute("data-tags"));
-            console.log(tags);
-            if (document.getElementById("latitude_geotag").value === '' || document.getElementById("longitude_geotag").value === '') {
-                tryLocate((position => {
 
-                        const lat = getLatitude(position);
-                        const lon = getLongitude(position);
+            var updateLocationFields = function (position) {
+                document.getElementById('latitude_geotag').value = getLatitude(position);
+                document.getElementById('longitude_geotag').value = getLongitude(position);
+                document.getElementById('hidden_latitude').value = getLatitude(position);
+                document.getElementById('hidden_longitude').value = getLongitude(position);
+                document.getElementById('result-img').src = getLocationMapSrc(getLatitude(position), getLongitude(position));
+            };
 
-                        document.querySelector("#hidden_longitude").value = lon;
-                        document.querySelector("#hidden_latitude").value = lat;
-                        document.getElementById("longitude_geotag").value = lon;
-                        document.getElementById("latitude_geotag").value = lat;
-                        imageNode.src = getLocationMapSrc(lat, lon, tags, 5);
-
-
-                    })
-                    , (msg => {
-                        alert(msg);
-                    }))
-            } else {
-                let lat = document.getElementById("latitude_geotag").value;
-                let long = document.getElementById("longitude_geotag").value;
-                imageNode.src = getLocationMapSrc(lat, long, tags , 5)
+            var showErrorMessage = function (message) {
+                alert(message);
+            };
+            if (document.getElementById('latitude_geotag').value === '')
+                tryLocate(updateLocationFields, showErrorMessage);
+            else {
+                const taglist_json = document.getElementById('result-img').getAttribute('data-tags');
+                document.getElementById('result-img').src = getLocationMapSrc(document.getElementById('hidden_latitude').value, document.getElementById('hidden_longitude').value, JSON.parse(taglist_json));
             }
         }
     }; // ... Ende öffentlicher Teil
@@ -166,23 +159,25 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 
-if (submitTag) {
-    submitTag.addEventListener("click", function() {
+$("#tag-form").submit(function(event){
+    event.preventDefault();
+    document.getElementById("submit_geotag").addEventListener("click", function(){
         console.log("Adding")
+
         ajax.open("POST", "/geotags", true);
         ajax.setRequestHeader("Content-Type", "application/json");
         ajax.responseType = "json";
 
-        let lat = document.getElementById("latitude").value;
-        let lon = document.getElementById("longitude").value;
-        let name = document.getElementById("name").value;
-        let hashtag = document.getElementById("hashtag").value;
+        let lat = document.getElementById("latitude_geotag").value;
+        let lon = document.getElementById("longitude_geotag").value;
+        let name = document.getElementById("name_geotag").value;
+        let hashtag = document.getElementById("hashtag_geotag").value;
         ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
-    });
-}
-
-if (searchTag) {
-    searchTag.addEventListener("click", function() {
+    })
+})
+$("#filter-form").submit(function(event){
+    event.preventDefault();
+    document.getElementById("discovery_apply").addEventListener("click", function(){
         console.log("Searching");
         let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
         let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
@@ -191,8 +186,8 @@ if (searchTag) {
         ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
         ajax.responseType = "json";
         ajax.send(null);
-    });
-}
+    })
+})
 
 
 ajax.onreadystatechange = function() {

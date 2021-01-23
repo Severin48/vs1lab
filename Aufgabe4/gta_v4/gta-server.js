@@ -43,11 +43,12 @@ app.use(express.static(__dirname + "/public"));
  */
 
 // TODO: CODE ERGÄNZEN
-function GeoTag (latitude, longitude, name, hashtag){
+function GeoTag (latitude, longitude, name, hashtag, id){
     this.latitude = latitude;
     this.longitude = longitude;
     this.name = name;
     this.hashtag = hashtag;
+    this.id = id
 
     this.getLat = function(){
         return this.latitude;
@@ -89,22 +90,21 @@ let InMemory = (function (){
         },
 
         searchTerm: function (term) {
-            let matchTerm = tagList.filter(function (entry) {
-                return (
-                    entry.getName().toString().includes(term) ||
-                    entry.getHashtag().toString().includes(term)
-                );
+            return tagList.filter(function (entry) {
+
+                   return entry.name.includes(term)|| entry.hashtag.includes(term)
+
             });
-            return matchTerm;
+
         },
 
         searchId: function(id){
             return tagList.filter(GeoTag => GeoTag.id == id);
         },
 
-        add: function (GeoTag) {
-            GeoTag.id = id++;
-            tagList.push(GeoTag);
+        add: function (tag) {
+            tag.id = id++;
+            tagList.push(tag);
         },
 
         getTagList: function() {
@@ -218,6 +218,7 @@ app.post('/discovery', function(req, res) {
 
 app.post('/geotags', function(req, res){
     let id = InMemory.add(req.body);
+    console.log(InMemory.getTagList());
     res.header('Location', req.url + "/" + id);
     res.status(201).json(InMemory.getTagList());
 });
@@ -225,10 +226,10 @@ app.post('/geotags', function(req, res){
 app.get('/geotags', function(req, res){
     let stdRadius = 10;
     let lat = req.query.lat;
-    let lon = req.query.lon;
+    let lon = req.query.long;
     let term = req.query.term;
 
-    if(term == undefined){
+    if(term === undefined){
         res.status(200).json(InMemory.getTagList());
     } else if(term == ""){
         res.status(200).json(InMemory.searchRadius(lat, lon, stdRadius));
