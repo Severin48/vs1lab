@@ -45,7 +45,7 @@
 				<label>Hashtag:</label>
 				<input id="hashtag_geotag" type="text" name="hashtag_geotag"
 					   placeholder="# + max. 10 letters" maxlength="11" pattern="\#(w*)">
-				<input id="submit_geotag" type="submit" value="Submit" />
+				<input id="submit_geotag" type="submit" value="Submit" /> <!-- TODO: CHANGED FROM submit to button -->
 				<!-- ############### Aufgabe1a Form1 Ende -->
 			</form>
 		</fieldset>
@@ -75,7 +75,7 @@
 		</div>
 
 		<div class="tagmap">
-			<img id="result-img" src="./images/mapview.jpg" alt="a map with locations" data-tags="<%= datatags %>"/>
+			<img id="result-img" src="./images/mapview.jpg" alt="Map with GeoTags" data-tags="<%= datatags %>"/>
 			<div class="caption">Result map</div>
 		</div>
 

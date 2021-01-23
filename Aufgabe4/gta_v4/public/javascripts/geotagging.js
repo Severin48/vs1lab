@@ -13,6 +13,13 @@ let ajax = new XMLHttpRequest();
 let submitTag = document.getElementById("submit_button");
 let searchTag = document.getElementById("search_button");
 
+var GeoTag = function (lat, lon, name, hashtag) {
+    this.latitude = lat;
+    this.longitude = lon;
+    this.name = name;
+    this.hashtag = hashtag;
+}
+
 // Hier wird die verwendete API für Geolocations gewählt
 // Die folgende Deklaration ist ein 'Mockup', das immer funktioniert und eine fixe Position liefert.
 GEOLOCATIONAPI = {
@@ -160,9 +167,8 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
 
 submitTag.addEventListener("click", function() {
-    console.log("hinzufügen");
-
-    ajax.open("POST", "/geotags", true);
+    console.log("Adding")
+    ajax.open("POST", "/tagging", true); /TODO: changed url: geotags
     ajax.setRequestHeader("Content-Type", "application/json");
     ajax.responseType = "json";
 
@@ -174,10 +180,10 @@ submitTag.addEventListener("click", function() {
 });
 
 searchTag.addEventListener("click", function() {
-    console.log("suchen");
+    console.log("Searching");
     let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
     let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
-    let termURL = "&term=" + document.getElementById("search term").value;
+    let termURL = "&term=" + document.getElementById("discovery_search").value; //DONE corrected here
 
     ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
     ajax.responseType = "json";
