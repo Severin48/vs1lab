@@ -5,10 +5,10 @@ POST http://localhost:3000/geotags
 Content-Type: application/json
 
 {
-"latitude":14.12,
-  "longitude": 2.020,
-  "name": "testTag",
-  "hashtag": "#test"
+  "latitude": "40.23489",
+  "longitude": "14.12341",
+  "name": "Karlsruhe",
+  "hashtag": "#KA"
 }
 ####
 
@@ -19,10 +19,10 @@ PUT http://localhost:3000/geotags/1
 Content-Type: application/json
 
 {
-  "latitude":60.12349,
-  "longitude": 8.1234,
-  "name": "Karlsruhe",
-  "hashtag": "#KA"
+  "latitude": "60.1234",
+  "longitude": "14.12341",
+  "name": "iwi",
+  "hashtag": "#edu"
 }
 ####
 
