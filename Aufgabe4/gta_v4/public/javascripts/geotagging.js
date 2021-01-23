@@ -166,33 +166,36 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 
+if (submitTag) {
+    submitTag.addEventListener("click", function() {
+        console.log("Adding")
+        ajax.open("POST", "/geotags", true);
+        ajax.setRequestHeader("Content-Type", "application/json");
+        ajax.responseType = "json";
 
-submitTag.addEventListener("click", function() {
-    console.log("Adding")
-    ajax.open("POST", "/geotags", true);
-    ajax.setRequestHeader("Content-Type", "application/json");
-    ajax.responseType = "json";
+        let lat = document.getElementById("latitude").value;
+        let lon = document.getElementById("longitude").value;
+        let name = document.getElementById("name").value;
+        let hashtag = document.getElementById("hashtag").value;
+        ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
+    });
+}
 
-    let lat = document.getElementById("latitude").value;
-    let lon = document.getElementById("longitude").value;
-    let name = document.getElementById("name").value;
-    let hashtag = document.getElementById("hashtag").value;
-    ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
-});
+if (searchTag) {
+    searchTag.addEventListener("click", function() {
+        console.log("Searching");
+        let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
+        let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
+        let termURL = "&term=" + document.getElementById("discovery_search").value; //DONE corrected here
 
-searchTag.addEventListener("click", function() {
-    console.log("Searching");
-    let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
-    let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
-    let termURL = "&term=" + document.getElementById("discovery_search").value; //DONE corrected here
+        ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
+        ajax.responseType = "json";
+        ajax.send(null);
+    });
+}
 
-    ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
-    ajax.responseType = "json";
-    ajax.send(null);
-});
 
 ajax.onreadystatechange = function() {
-
     if(ajax.readyState == 4){
         console.log(ajax.response);
         let resultArray = ajax.response;
