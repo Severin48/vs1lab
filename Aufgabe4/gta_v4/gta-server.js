@@ -9,18 +9,14 @@
  * Definiere Modul Abhängigkeiten und erzeuge Express app.
  */
 
-var http = require('http');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-var express = require('express');
-// var credentials = require("./credentials.js");
-// var cookies = require('cookie-parser');
+let http = require('http');
+let logger = require('morgan');
+let bodyParser = require('body-parser');
+let express = require('express');
+//let connect = require('connect');
 
 
-var app;
-app = express(); //npm install express@">=3.0.0 <4.0.0" --save
-//var app = connect(); //npm install connect https://github.com/senchalabs/connect#middleware
-// app.use(cookies(credentials.cookieSecret));
+let app = express(); //npm install express@">=3.0.0 <4.0.0" --save
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
