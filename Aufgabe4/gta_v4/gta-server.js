@@ -254,7 +254,7 @@ app.put('/geotags/:id',function(req, res){
 
 app.delete('/geotags/:id',function(req, res){
     if (InMemory.searchId(req.params.id)[0]) {
-        InMemory.remove(InMemory.searchId(req.params.id)[0]);
+        InMemory.delete(InMemory.searchId(req.params.id)[0]);
         res.status(201).json(InMemory.getTagList());
     } else {
         res.statusCode = 404;

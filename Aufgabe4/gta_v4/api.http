@@ -12,10 +12,10 @@ Content-Type: application/json
 }
 ####
 
-GET http://localhost:3000/geotags/1
+GET http://localhost:3000/geotags/0
 ####
 
-PUT http://localhost:3000/geotags/1
+PUT http://localhost:3000/geotags/0
 Content-Type: application/json
 
 {
@@ -26,4 +26,4 @@ Content-Type: application/json
 }
 ####
 
-DELETE http://localhost:3000/geotags/1
+DELETE http://localhost:3000/geotags/0

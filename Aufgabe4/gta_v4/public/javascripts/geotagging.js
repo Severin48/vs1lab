@@ -169,7 +169,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
 submitTag.addEventListener("click", function() {
     console.log("Adding")
-    ajax.open("POST", "/tagging", true); /TODO: changed url: geotags
+    ajax.open("POST", "/geotags", true); /TODO: changed url: geotags
     ajax.setRequestHeader("Content-Type", "application/json");
     ajax.responseType = "json";
 
