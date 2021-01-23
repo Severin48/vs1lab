@@ -75,6 +75,7 @@ function GeoTag (latitude, longitude, name, hashtag){
 // TODO: CODE ERGÄNZEN
 let InMemory = (function (){
     let tagList = [];
+    let id = 0;
 
     return {
         searchRadius: function (latitude, longitude, radius) {
@@ -98,10 +99,11 @@ let InMemory = (function (){
         },
 
         searchId: function(id){
-            return tagList.filter(tag => tag.id == id);
+            return tagList.filter(GeoTag => GeoTag.id == id);
         },
 
         add: function (GeoTag) {
+            GeoTag.id = id++;
             tagList.push(GeoTag);
         },
 
@@ -110,7 +112,8 @@ let InMemory = (function (){
         },
 
         delete: function (GeoTag) {
-            tagList.splice(GeoTag.getCurrentPosition(), 1);
+            tagList.splice(tagList.indexOf(GeoTag), 1);
+            //tagList.splice(GeoTag.getCurrentPosition(), 1);
         }
     }
 })();
