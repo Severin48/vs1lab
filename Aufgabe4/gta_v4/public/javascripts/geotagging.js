@@ -167,8 +167,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  */
 
 if (submitTag) {
-    submitTag.addEventListener("click", function(event) {
-        event.preventDefault();
+    submitTag.addEventListener("click", function(){
         console.log("Adding ====================================================")
         ajax.open("POST", "/geotags", true);
         ajax.setRequestHeader("Content-Type", "application/json");
@@ -182,10 +181,10 @@ if (submitTag) {
     });
 }
 
+
 if (searchTag) {
-    searchTag.addEventListener("click", function(event) {
-        event.preventDefault();
-        console.log("Searching Adding ====================================================");
+    console.log("Searching Adding ====================================================");
+    searchTag.addEventListener("click", function () {
         let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
         let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
         let termURL = "&term=" + document.getElementById("discovery_search").value; //DONE corrected here
@@ -193,9 +192,8 @@ if (searchTag) {
         ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
         ajax.responseType = "json";
         ajax.send(null);
-    }, true);
+    });
 }
-
 
 ajax.onreadystatechange = function() {
     if(ajax.readyState == 4){
@@ -214,6 +212,6 @@ ajax.onreadystatechange = function() {
     }
 }
 
-$(function () {
-    gtaLocator.updateLocation();
-});
+// $(function () {
+//     gtaLocator.updateLocation();
+// });
