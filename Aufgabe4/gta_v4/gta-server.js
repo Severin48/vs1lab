@@ -97,8 +97,16 @@ let InMemory = (function (){
             return matchTerm;
         },
 
+        searchId: function(id){
+            return tagList.filter(tag => tag.id == id);
+        },
+
         add: function (GeoTag) {
             tagList.push(GeoTag);
+        },
+
+        getTagList: function() {
+            return tagList;
         },
 
         delete: function (GeoTag) {
@@ -220,19 +228,19 @@ app.get('/geotags', function(req, res){
     if(term == undefined){
         res.status(200).json(InMemory.getTagList());
     } else if(term == ""){
-        res.status(200).json(InMemory.searchByRadius(lat, lon, stdRadius));
+        res.status(200).json(InMemory.searchRadius(lat, lon, stdRadius));
     } else {
-        res.status(200).json(InMemory.searchByTerm(term));
+        res.status(200).json(InMemory.searchTerm(term));
     }
 });
 
 app.get('/geotags/:id',function(req, res){
     let id = req.params.id;
-    res.status(200).json(InMemory.searchById(id)[0]);
+    res.status(200).json(InMemory.searchId(id)[0]);
 });
 
 app.put('/geotags/:id',function(req, res){
-    let tag = InMemory.searchById(req.params.id)[0];
+    let tag = InMemory.searchId(req.params.id)[0];
     tag.latitude = req.body.latitude ? req.body.latitude : tag.latitude;
     tag.longitude = req.body.longitude ? req.body.longitude : tag.longitude;
     tag.name = req.body.name ? req.body.name : tag.name;
@@ -242,8 +250,8 @@ app.put('/geotags/:id',function(req, res){
 });
 
 app.delete('/geotags/:id',function(req, res){
-    if (InMemory.searchById(req.params.id)[0]) {
-        InMemory.remove(InMemory.searchById(req.params.id)[0]);
+    if (InMemory.searchId(req.params.id)[0]) {
+        InMemory.remove(InMemory.searchId(req.params.id)[0]);
         res.status(201).json(InMemory.getTagList());
     } else {
         res.statusCode = 404;
@@ -254,14 +262,14 @@ app.delete('/geotags/:id',function(req, res){
  * Setze Port und speichere in Express.
  */
 
-var port = 3000;
+let port = 3000;
 app.set('port', port);
 
 /**
  * Erstelle HTTP Server
  */
 
-var server = http.createServer(app);
+let server = http.createServer(app);
 
 /**
  * Horche auf dem Port an allen Netzwerk-Interfaces

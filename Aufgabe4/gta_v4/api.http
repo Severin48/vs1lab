@@ -1,0 +1,34 @@
+Send request
+GET http://localhost:3000/geotags
+#####
+
+Send request
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+"latitude":14.12,
+  "longitude": 2.020,
+  "name": "testTag",
+  "hashtag": "#test"
+}
+####
+
+Send request
+GET http://localhost:3000/geotags/1
+####
+
+Send request
+PUT http://localhost:3000/geotags/1
+Content-Type: application/json
+
+{
+  "latitude":60.12349,
+  "longitude": 8.1234,
+  "name": "Karlsruhe",
+  "hashtag": "#KA"
+}
+####
+
+Send request
+DELETE http://localhost:3000/geotags/1

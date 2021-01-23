@@ -19,6 +19,7 @@ var GeoTag = function (lat, lon, name, hashtag) {
     this.name = name;
     this.hashtag = hashtag;
 }
+//TODO: Karte wird nicht aktualisiert und Tags werden nicht angezeigt wenn Suche ohne Suchbegriff eingegeben wird
 
 // Hier wird die verwendete API für Geolocations gewählt
 // Die folgende Deklaration ist ein 'Mockup', das immer funktioniert und eine fixe Position liefert.
