@@ -1,0 +1,29 @@
+GET http://localhost:3000/geotags
+#####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "40.23489",
+  "longitude": "14.12341",
+  "name": "Karlsruhe",
+  "hashtag": "#KA"
+}
+####
+
+GET http://localhost:3000/geotags/1
+####
+
+PUT http://localhost:3000/geotags/1
+Content-Type: application/json
+
+{
+  "latitude": "60.1234",
+  "longitude": "14.12341",
+  "name": "iwi",
+  "hashtag": "#edu"
+}
+####
+
+DELETE http://localhost:3000/geotags/1

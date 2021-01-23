@@ -4,25 +4,31 @@
  * Verzeichnisbaum implementieren. Dazu müssen die TODOs erledigt werden.
  */
 
+
 /**
  * Definiere Modul Abhängigkeiten und erzeuge Express app.
  */
 
 var http = require('http');
-//var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
+// var credentials = require("./credentials.js");
+// var cookies = require('cookie-parser');
+
 
 var app;
-app = express();
+app = express(); //npm install express@">=3.0.0 <4.0.0" --save
+//var app = connect(); //npm install connect https://github.com/senchalabs/connect#middleware
+// app.use(cookies(credentials.cookieSecret));
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json());
 
 // Setze ejs als View Engine
 app.set('view engine', 'ejs');
+
+app.use(express.static(__dirname + "/public"));
 
 /**
  * Konfiguriere den Pfad für statische Dateien.
@@ -67,6 +73,7 @@ function GeoTag (latitude, longitude, name, hashtag){
  */
 
 // TODO: CODE ERGÄNZEN
+// TODO: CODE ERGÄNZEN
 var InMemory = (function (){
     //Private Member
     var tagList = [];
@@ -106,6 +113,7 @@ var InMemory = (function (){
     }
 })();
 
+
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -115,6 +123,7 @@ var InMemory = (function (){
  * Als Response wird das ejs-Template ohne Geo Tag Objekte gerendert.
  */
 
+// zur Erzeugung der Einstiegsseite ist vorgegeben (hier sieht man, wie mit EJS eine HTML-Seite erzeugt wird
 app.get('/', function(req, res) {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
@@ -125,6 +134,12 @@ app.get('/', function(req, res) {
         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
 
     });
+    //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
+    //Dann res.send(); um Cookies zu senden
+    //console.log(req.cookies);
+    //console.log(req.signedCookies);
+    //var val = req.signedCookies. --name vom cookie--
+    //Cookie löschen: res.clearCookie(name)
 });
 
 /**
@@ -143,10 +158,9 @@ app.get('/', function(req, res) {
 // TODO: CODE ERGÄNZEN START
 app.post('/tagging', function (req, res)  {
     let lat = req.body.latitudeGeotag;
-
     let long = req.body.longitudeGeotag;
-    let name = req.body.name_box1;
-    let hashtag = req.body.hashtag_box1;
+    let name = req.body.name_geotag;
+    let hashtag = req.body.hashtag_geotag;
     let geoTag = new GeoTag(lat,long,name,hashtag);
 
     InMemory.add(geoTag);
@@ -175,44 +189,38 @@ app.post('/tagging', function (req, res)  {
  */
 
 // TODO: CODE ERGÄNZEN
-app.post('/discovery', function(req, res){
+app.post('/discovery', function(req, res) {
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
-    var term = req.body.search1;
+    var term = req.body.discovery_search;
 
 
-    if (term){
-        res.render('gta',{
-            taglist: InMemory.searchBegriff(term),
+    if (term) {
+        res.render('gta', {
+            taglist: InMemory.searchTerm(term),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchBegriff(term))
+            datatags: JSON.stringify(InMemory.searchTerm(term))
         })
     } else {
-        res.render('gta',{
-            taglist: InMemory.searchRadius(lat,long,5),
+        res.render('gta', {
+            taglist: InMemory.searchRadius(lat, long, 5),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+            datatags: JSON.stringify(InMemory.searchRadius(lat, long, 5))
         })
-    }
+    }});
 
-});
-/**
- * Aufgabe 4
- */
-//post new resource
 app.post('/geotags', function(req, res){
     let id = InMemory.add(req.body);
-    console.log("Request Body: " + req.body);
     res.header('Location', req.url + "/" + id);
     res.status(201).json(InMemory.getTagList());
 });
-//get by radius, by term or all
+
 app.get('/geotags', function(req, res){
     let stdRadius = 10;
     let lat = req.query.lat;
-    let lon = req.query.long;
+    let lon = req.query.lon;
     let term = req.query.term;
 
     if(term == undefined){
@@ -220,22 +228,46 @@ app.get('/geotags', function(req, res){
     } else if(term == ""){
         res.status(200).json(InMemory.searchRadius(lat, lon, stdRadius));
     } else {
-        res.status(200).json(InMemory.searchBegriff(term));
+        res.status(200).json(InMemory.searchTerm(term));
     }
 });
 
+app.get('/geotags/:id',function(req, res){
+    let id = req.params.id;
+    res.status(200).json(InMemory.searchId(id)[0]);
+});
+
+app.put('/geotags/:id',function(req, res){
+    let tag = InMemory.searchId(req.params.id)[0];
+    tag.latitude = req.body.latitude ? req.body.latitude : tag.latitude;
+    tag.longitude = req.body.longitude ? req.body.longitude : tag.longitude;
+    tag.name = req.body.name ? req.body.name : tag.name;
+    tag.hashtag = req.body.hashtag ? req.body.hashtag : tag.hashtag;
+    tag.id = req.params.id;
+    res.status(201).json(tag);
+});
+
+app.delete('/geotags/:id',function(req, res){
+    if (InMemory.searchId(req.params.id)[0]) {
+        InMemory.remove(InMemory.searchId(req.params.id)[0]);
+        res.status(201).json(InMemory.getTagList());
+    } else {
+        res.statusCode = 404;
+        res.send("ID NOT FOUND");
+    }
+});
 /**
  * Setze Port und speichere in Express.
  */
 
-var port = 3000;
+let port = 3000;
 app.set('port', port);
 
 /**
  * Erstelle HTTP Server
  */
 
-var server = http.createServer(app);
+let server = http.createServer(app);
 
 /**
  * Horche auf dem Port an allen Netzwerk-Interfaces
