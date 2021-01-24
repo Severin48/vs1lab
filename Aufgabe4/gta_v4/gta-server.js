@@ -133,8 +133,8 @@ app.get('/', function(req, res) {
         taglist: InMemory.getTagList(),
         lat: lat,
         long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
-
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        nrOfTags: InMemory.getTagList().length
     });
     //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
     //Dann res.send(); um Cookies zu senden
