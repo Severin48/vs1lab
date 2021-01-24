@@ -83,6 +83,24 @@ nextPage.addEventListener("click", function(){
     ajax.send(null);
 })
 
+firstPage.addEventListener("click", function(){
+    ajax.open("GET", "/geotags/first", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+})
+
+secondPage.addEventListener("click", function(){
+    ajax.open("GET", "/geotags/second", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+})
+
+thirdPage.addEventListener("click", function(){
+    ajax.open("GET", "/geotags/third", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+})
+
 //TODO: Karte wird nicht aktualisiert und Tags werden nicht angezeigt wenn Suche ohne Suchbegriff eingegeben wird
 
 // Hier wird die verwendete API für Geolocations gewählt

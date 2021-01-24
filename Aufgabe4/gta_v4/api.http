@@ -92,4 +92,136 @@ Content-Type: application/json
 }
 ####
 
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "40.23489",
+  "longitude": "10.12341",
+  "name": "C-Bau",
+  "hashtag": "#KA3"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "42.23489",
+  "longitude": "14.12341",
+  "name": "D-Bau",
+  "hashtag": "#KA4"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "38.23489",
+  "longitude": "14.8394",
+  "name": "E-Bau",
+  "hashtag": "#KA"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "40.45233",
+  "longitude": "14.12352",
+  "name": "A-Bau",
+  "hashtag": "#KA"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "40.6234",
+  "longitude": "14.62345",
+  "name": "Karlsruhe",
+  "hashtag": "#KA"
+}
+####
+
+PUT http://localhost:3000/geotags/0
+Content-Type: application/json
+
+{
+  "latitude": "60.1234",
+  "longitude": "14.12341",
+  "name": "iwi",
+  "hashtag": "#edu"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "40.23489",
+  "longitude": "10.12341",
+  "name": "C-Bau",
+  "hashtag": "#KA3"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "42.23489",
+  "longitude": "14.12341",
+  "name": "D-Bau",
+  "hashtag": "#KA4"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "38.23489",
+  "longitude": "14.8394",
+  "name": "E-Bau",
+  "hashtag": "#KA"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "40.45233",
+  "longitude": "14.12352",
+  "name": "A-Bau",
+  "hashtag": "#KA"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "40.6234",
+  "longitude": "14.62345",
+  "name": "Karlsruhe",
+  "hashtag": "#KA"
+}
+####
+
+PUT http://localhost:3000/geotags/0
+Content-Type: application/json
+
+{
+  "latitude": "60.1234",
+  "longitude": "14.12341",
+  "name": "iwi",
+  "hashtag": "#edu"
+}
+####
+
 DELETE http://localhost:3000/geotags/0

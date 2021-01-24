@@ -105,9 +105,9 @@ let InMemory = (function (){
         add: function (tag) {
             tag.id = id++;
             tagList.push(tag);
-            if(tagList.length > 5*pageCounter) {
-                pageCounter++;
-            }
+            // if(tagList.length > 5*pageCounter) {
+            //     pageCounter++;
+            // }
             refreshPartTags();
         },
 
@@ -117,18 +117,24 @@ let InMemory = (function (){
 
         delete: function (GeoTag) {
             tagList.splice(tagList.indexOf(GeoTag), 1);
-            if(tagList.length < 5*pageCounter) {
-                pageCounter--;
-            }
+            // if(tagList.length < 5*pageCounter) {
+            //     pageCounter--;
+            // }
             refreshPartTags();
             //tagList.splice(GeoTag.getCurrentPosition(), 1);
         }
     }
 })();
 
+
+
 let someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+5);
 
 function refreshPartTags() {
+    pageCounter = Math.floor(InMemory.getTagList().length / 5);
+    if (InMemory.getTagList().length % 5 > 0) {
+        pageCounter++;
+    }
     someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+5);
 }
 
@@ -172,12 +178,6 @@ app.get('/', function(req, res) {
         partTags: someTags,
         page: getCurrentPage()
     });
-    //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
-    //Dann res.send(); um Cookies zu senden
-    //console.log(req.cookies);
-    //console.log(req.signedCookies);
-    //var val = req.signedCookies. --name vom cookie--
-    //Cookie löschen: res.clearCookie(name)
 });
 
 /**
@@ -282,12 +282,46 @@ app.get('/geotags', function(req, res){
 app.get('/geotags/previous', function(req, res){
     prevPage();
     refreshPartTags();
+    res.render('gta', {
+        page: getCurrentPage()
+    });
     res.status(200).json(someTags);
 });
 
 app.get('/geotags/next', function(req, res){
     nextPage();
     refreshPartTags();
+
+    res.render('gta', {
+        page: getCurrentPage()
+    });
+    res.status(200).json(someTags);
+});
+
+app.get('/geotags/first', function(req, res){
+    refreshPartTags();
+    res.render('gta', {
+        page: getCurrentPage()
+    });
+    res.status(200).json(someTags);
+});
+
+app.get('/geotags/second', function(req, res){
+    nextPage();
+    refreshPartTags();
+    res.render('gta', {
+        page: getCurrentPage()
+    });
+    res.status(200).json(someTags);
+});
+
+app.get('/geotags/third', function(req, res){
+    nextPage();
+    nextPage();
+    refreshPartTags();
+    res.render('gta', {
+        page: getCurrentPage()
+    });
     res.status(200).json(someTags);
 });
 
