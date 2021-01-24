@@ -10,8 +10,8 @@ console.log("The script is going to start...");
 
 // Es folgen einige Deklarationen, die aber noch nicht ausgeführt werden ...
 let ajax = new XMLHttpRequest();
-let submitTag = document.getElementById("submit_button");
-let searchTag = document.getElementById("search_button");
+var tagButton = document.getElementById("submit_geotag");
+var disButton = document.getElementById("discovery_apply");
 
 var GeoTag = function (lat, lon, name, hashtag) {
     this.latitude = lat;
@@ -19,6 +19,53 @@ var GeoTag = function (lat, lon, name, hashtag) {
     this.name = name;
     this.hashtag = hashtag;
 }
+
+tagButton.addEventListener("click", function(){
+    console.log("Adding")
+
+    ajax.open("POST", "/geotags", true);
+    ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.responseType = "json";
+
+    let lat = document.getElementById("latitude_geotag").value;
+    let lon = document.getElementById("longitude_geotag").value;
+    let name = document.getElementById("name_geotag").value;
+    let hashtag = document.getElementById("hashtag_geotag").value;
+    ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
+
+})
+
+disButton.addEventListener("click", function(){
+    console.log("Searching");
+    let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
+    let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
+    let termURL = "&term=" + document.getElementById("discovery_search").value; //DONE corrected here
+
+    ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
+    ajax.responseType = "json";
+    ajax.send(null);
+})
+
+
+
+ajax.onreadystatechange = function() {
+    if(ajax.readyState == 4){
+        console.log("Ready!!!");
+        console.log(ajax.response);
+        let resultArray = ajax.response;
+        let results = "";
+
+        resultArray.forEach(function(tag){
+            results += "<li>";
+            results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
+            results += "</li>";
+        });
+        $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+        $("#results").html(results);
+        gtaLocator.updateLocation();
+    }
+}
+
 //TODO: Karte wird nicht aktualisiert und Tags werden nicht angezeigt wenn Suche ohne Suchbegriff eingegeben wird
 
 // Hier wird die verwendete API für Geolocations gewählt
@@ -131,30 +178,23 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            let imageNode = document.getElementById("result-img");
-            let tags = JSON.parse(imageNode.getAttribute("data-tags"));
-            console.log(tags);
-            if (document.getElementById("latitude_geotag").value === '' || document.getElementById("longitude_geotag").value === '') {
-                tryLocate((position => {
 
-                        const lat = getLatitude(position);
-                        const lon = getLongitude(position);
+            var updateLocationFields = function (position) {
+                document.getElementById('latitude_geotag').value = getLatitude(position);
+                document.getElementById('longitude_geotag').value = getLongitude(position);
+                document.getElementById('hidden_latitude').value = getLatitude(position);
+                document.getElementById('hidden_longitude').value = getLongitude(position);
+                document.getElementById('result-img').src = getLocationMapSrc(getLatitude(position), getLongitude(position));
+            };
 
-                        document.querySelector("#hidden_longitude").value = lon;
-                        document.querySelector("#hidden_latitude").value = lat;
-                        document.getElementById("longitude_geotag").value = lon;
-                        document.getElementById("latitude_geotag").value = lat;
-                        imageNode.src = getLocationMapSrc(lat, lon, tags, 5);
-
-
-                    })
-                    , (msg => {
-                        alert(msg);
-                    }))
-            } else {
-                let lat = document.getElementById("latitude_geotag").value;
-                let long = document.getElementById("longitude_geotag").value;
-                imageNode.src = getLocationMapSrc(lat, long, tags , 5)
+            var showErrorMessage = function (message) {
+                alert(message);
+            };
+            if (document.getElementById('latitude_geotag').value === '')
+                tryLocate(updateLocationFields, showErrorMessage);
+            else {
+                const taglist_json = document.getElementById('result-img').getAttribute('data-tags');
+                document.getElementById('result-img').src = getLocationMapSrc(document.getElementById('hidden_latitude').value, document.getElementById('hidden_longitude').value, JSON.parse(taglist_json));
             }
         }
     };
@@ -165,58 +205,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * angegebene Funktion aufgerufen. An dieser Stelle beginnt die eigentliche Arbeit
  * des Skripts.
  */
-
-if (submitTag) {
-    $("#tag-form").submit(function (event) {
-        event.preventDefault();
-        submitTag.addEventListener("click", function() {
-            console.log("Adding")
-            ajax.open("POST", "/geotags", true);
-            ajax.setRequestHeader("Content-Type", "application/json");
-            ajax.responseType = "json";
-
-            let lat = document.getElementById("latitude").value;
-            let lon = document.getElementById("longitude").value;
-            let name = document.getElementById("name").value;
-            let hashtag = document.getElementById("hashtag").value;
-            ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
-        });
-    })
-}
-
-if (searchTag) {
-    $("#filter-form").submit(function (event) {
-        event.preventDefault();
-        searchTag.addEventListener("click", function() {
-            console.log("Searching");
-            let latURL = "?lat=" + document.getElementById("hidden_latitude").value;
-            let lonURL = "&lon=" + document.getElementById("hidden_longitude").value;
-            let termURL = "&term=" + document.getElementById("discovery_search").value; //DONE corrected here
-
-            ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
-            ajax.responseType = "json";
-            ajax.send(null);
-        }, true);
-    });
-}
-
-
-ajax.onreadystatechange = function() {
-    if(ajax.readyState == 4){
-        console.log(ajax.response);
-        let resultArray = ajax.response;
-        let results = "";
-
-        resultArray.forEach(function(tag){
-            results += "<li>";
-            results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
-            results += "</li>";
-        });
-        $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
-        $("#results").html(results);
-        gtaLocator.updateLocation();
-    }
-}
 
 $(function () {
     gtaLocator.updateLocation();
