@@ -7,7 +7,7 @@ Content-Type: application/json
 {
   "latitude": "40.23489",
   "longitude": "14.12341",
-  "name": "Karlsruhe",
+  "name": "asdf",
   "hashtag": "#KA"
 }
 ####
@@ -18,7 +18,7 @@ Content-Type: application/json
 {
   "latitude": "41.23489",
   "longitude": "12.12341",
-  "name": "Karlsruhe",
+  "name": "E-Bau",
   "hashtag": "#KA2"
 }
 ####
@@ -29,7 +29,7 @@ Content-Type: application/json
 {
   "latitude": "40.23489",
   "longitude": "10.12341",
-  "name": "Karlsruhe",
+  "name": "C-Bau",
   "hashtag": "#KA3"
 }
 ####
@@ -40,7 +40,7 @@ Content-Type: application/json
 {
   "latitude": "42.23489",
   "longitude": "14.12341",
-  "name": "Karlsruhe",
+  "name": "D-Bau",
   "hashtag": "#KA4"
 }
 ####
@@ -51,7 +51,7 @@ Content-Type: application/json
 {
   "latitude": "38.23489",
   "longitude": "14.8394",
-  "name": "Karlsruhe",
+  "name": "E-Bau",
   "hashtag": "#KA"
 }
 ####
@@ -62,7 +62,7 @@ Content-Type: application/json
 {
   "latitude": "40.45233",
   "longitude": "14.12352",
-  "name": "Karlsruhe",
+  "name": "A-Bau",
   "hashtag": "#KA"
 }
 ####

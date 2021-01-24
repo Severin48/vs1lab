@@ -12,6 +12,11 @@ console.log("The script is going to start...");
 let ajax = new XMLHttpRequest();
 var tagButton = document.getElementById("submit_geotag");
 var disButton = document.getElementById("discovery_apply");
+var previousPage = document.getElementById("previousPage");
+var firstPage = document.getElementById("firstPage");
+var secondPage = document.getElementById("secondPage");
+var thirdPage = document.getElementById("thirdPage");
+var nextPage = document.getElementById("nextPage");
 
 var GeoTag = function (lat, lon, name, hashtag) {
     this.latitude = lat;
@@ -65,6 +70,18 @@ ajax.onreadystatechange = function() {
         gtaLocator.updateLocation();
     }
 }
+
+previousPage.addEventListener("click", function(){
+    ajax.open("GET", "/geotags/previous", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+})
+
+nextPage.addEventListener("click", function(){
+    ajax.open("GET", "/geotags/next", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+})
 
 //TODO: Karte wird nicht aktualisiert und Tags werden nicht angezeigt wenn Suche ohne Suchbegriff eingegeben wird
 

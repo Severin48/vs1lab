@@ -69,10 +69,14 @@ function GeoTag (latitude, longitude, name, hashtag, id){
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-// TODO: CODE ERGÄNZEN
+let pageCounter = 1;
+let currentPage = 1;
+
 let InMemory = (function (){
     let tagList = [];
     let id = 0;
+    let pg = currentPage;
+
 
     return {
         searchRadius: function (latitude, longitude, radius) {
@@ -101,7 +105,10 @@ let InMemory = (function (){
         add: function (tag) {
             tag.id = id++;
             tagList.push(tag);
-
+            if(tagList.length > 5*pageCounter) {
+                pageCounter++;
+            }
+            refreshPartTags();
         },
 
         getTagList: function() {
@@ -110,10 +117,36 @@ let InMemory = (function (){
 
         delete: function (GeoTag) {
             tagList.splice(tagList.indexOf(GeoTag), 1);
+            if(tagList.length < 5*pageCounter) {
+                pageCounter--;
+            }
+            refreshPartTags();
             //tagList.splice(GeoTag.getCurrentPosition(), 1);
         }
     }
 })();
+
+let someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+5);
+
+function refreshPartTags() {
+    someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+5);
+}
+
+function getCurrentPage() {
+    return currentPage;
+}
+
+function nextPage() {
+    if (currentPage < pageCounter) {
+        currentPage++;
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+    }
+}
 
 
 /**
@@ -129,12 +162,15 @@ let InMemory = (function (){
 app.get('/', function(req, res) {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
+    console.log("Current Page: " + getCurrentPage())
     res.render('gta', {
         taglist: InMemory.getTagList(),
         lat: lat,
         long: long,
         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
-        nrOfTags: InMemory.getTagList().length
+        nrOfTags: InMemory.getTagList().length,
+        partTags: someTags,
+        page: getCurrentPage()
     });
     //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
     //Dann res.send(); um Cookies zu senden
@@ -175,7 +211,9 @@ app.post('/tagging', function (req, res)  {
         taglist: InMemory.searchRadius(lat,long,5),
         lat: lat,
         long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        partTags: someTags,
+        page: getCurrentPage()
     })
 });
 /**
@@ -202,14 +240,18 @@ app.post('/discovery', function(req, res) {
             taglist: InMemory.searchTerm(term),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchTerm(term))
+            datatags: JSON.stringify(InMemory.searchTerm(term)),
+            partTags: someTags,
+            page: getCurrentPage()
         })
     } else {
         res.render('gta', {
             taglist: InMemory.searchRadius(lat, long, 5),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchRadius(lat, long, 5))
+            datatags: JSON.stringify(InMemory.searchRadius(lat, long, 5)),
+            partTags: someTags,
+            page: getCurrentPage()
         })
     }});
 
@@ -227,14 +269,26 @@ app.get('/geotags', function(req, res){
     let lon = req.query.long;
     let term = req.query.term;
 
-
     if(term === undefined){
         res.status(200).json(InMemory.getTagList());
     } else if(term === ""){
         res.status(200).json(InMemory.getTagList());
     } else {
-        res.status(200).json(InMemory.searchTerm(term));
+        //res.status(200).json(InMemory.searchTerm(term));
+        res.status(200).json(someTags);
     }
+});
+
+app.get('/geotags/previous', function(req, res){
+    prevPage();
+    refreshPartTags();
+    res.status(200).json(someTags);
+});
+
+app.get('/geotags/next', function(req, res){
+    nextPage();
+    refreshPartTags();
+    res.status(200).json(someTags);
 });
 
 app.get('/geotags/:id',function(req, res){

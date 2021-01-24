@@ -68,18 +68,15 @@
 
 		<div class="taglist">
 			<ul id="results">
-				<!--<% //if (taglist !== undefined && ) taglist.forEach(function(gtag) { %>-->
-				<% if (taglist !== undefined) taglist.forEach(function(gtag) { %>
+				<% if (partTags !== undefined) partTags.forEach(function(gtag) { %>
 					<li><%= gtag.name %> ( <%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %> </li>
 				<% }); %>
 			</ul>
-			<pg_left> <% console.log("NR OF TAGS: " + nrOfTags) %> <!-- Hier Pagecounter-- oben den pagecounter verwenden um die 5*x-ten Elemente anzuzeigen -->
-				<button> << </button>
-				<button> 1 </button>
-				<button> 2 </button>
-				<button> 3 </button>
-				<button> >> </button>
-			</pg_left>
+			<button id="previousPage"> << </button>
+			<button id="firstPage"> <%= page %> </button>
+			<button id="secondPage"> <%= page + 1 %> </button>
+			<button id="thirdPage"> <%= page + 2 %> </button>
+			<button id="nextPage"> >> </button>
 		</div>
 
 		<div class="tagmap">
