@@ -82,8 +82,8 @@ let InMemory = (function (){
         searchRadius: function (latitude, longitude, radius) {
             let matchRadius = tagList.filter(function (entry) {
                 return (
-                    (Math.abs(entry.getLat() - latitude) <= radius) &&
-                    (Math.abs(entry.getLong() - longitude) <= radius)
+                    (Math.abs(entry.latitude - latitude) <= radius) &&
+                    (Math.abs(entry.longitude - longitude) <= radius)
                 );
             });
             return matchRadius;
@@ -105,6 +105,7 @@ let InMemory = (function (){
         add: function (tag) {
             tag.id = id++;
             tagList.push(tag);
+
         },
 
         getTagList: function() {
@@ -133,7 +134,7 @@ app.get('/', function(req, res) {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
     res.render('gta', {
-        taglist: [],
+        taglist: InMemory.getTagList(),
         lat: lat,
         long: long,
         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
@@ -218,7 +219,8 @@ app.post('/discovery', function(req, res) {
 
 app.post('/geotags', function(req, res){
     let id = InMemory.add(req.body);
-    console.log(InMemory.getTagList());
+
+    //console.log(InMemory.getTagList());
     res.header('Location', req.url + "/" + id);
     res.status(201).json(InMemory.getTagList());
 });
@@ -229,10 +231,11 @@ app.get('/geotags', function(req, res){
     let lon = req.query.long;
     let term = req.query.term;
 
+
     if(term === undefined){
         res.status(200).json(InMemory.getTagList());
-    } else if(term == ""){
-        res.status(200).json(InMemory.searchRadius(lat, lon, stdRadius));
+    } else if(term === ""){
+        res.status(200).json(InMemory.getTagList());
     } else {
         res.status(200).json(InMemory.searchTerm(term));
     }
