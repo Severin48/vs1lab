@@ -33,14 +33,12 @@ app.use(express.static(__dirname + "/public"));
  * Teste das Ergebnis im Browser unter 'http://localhost:3000/'.
  */
 
-// TODO: CODE ERGÄNZEN
 app.use(express.static(__dirname + "/public"));
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
  */
 
-// TODO: CODE ERGÄNZEN
 function GeoTag (latitude, longitude, name, hashtag, id){
     this.latitude = latitude;
     this.longitude = longitude;
@@ -71,11 +69,16 @@ function GeoTag (latitude, longitude, name, hashtag, id){
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-// TODO: CODE ERGÄNZEN
+let pageCounter = 1;
+let currentPage = 1;
+
 let InMemory = (function (){
     let tagList = [];
     let id = 0;
-    const results = {};
+
+
+    let pg = currentPage;
+
 
     return {
         searchRadius: function (latitude, longitude, radius) {
@@ -104,7 +107,10 @@ let InMemory = (function (){
         add: function (tag) {
             tag.id = id++;
             tagList.push(tag);
-
+            // if(tagList.length > 5*pageCounter) {
+            //     pageCounter++;
+            // }
+            refreshPartTags();
         },
 
         getTagList: function() {
@@ -113,33 +119,43 @@ let InMemory = (function (){
 
         delete: function (GeoTag) {
             tagList.splice(tagList.indexOf(GeoTag), 1);
+            // if(tagList.length < 5*pageCounter) {
+            //     pageCounter--;
+            // }
+            refreshPartTags();
             //tagList.splice(GeoTag.getCurrentPosition(), 1);
         },
-        getTagListResult: function(page , limit){
-            const startIndex = (page - 1)*limit;
-            const endIndex = page*limit;
 
-            if (endIndex < tagList.length){
-                results.next = {
-                    page: page +1,
-                    limit: limit
-                }
-            }
-
-
-            results.results = tagList.slice(startIndex,endIndex);
-            return results.results;
-        },
-        getTagListPrevious: function (page , limit){
-            const startIndex = (page-1)*limit;
-        if (startIndex > 0){
-            results.previous = {
-                page: page -1,
-                limit: limit
-            }
-        }}
     }
 })();
+
+
+
+let someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+5);
+
+function refreshPartTags() {
+    pageCounter = Math.floor(InMemory.getTagList().length / 5);
+    if (InMemory.getTagList().length % 5 > 0) {
+        pageCounter++;
+    }
+    someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+5);
+}
+
+function getCurrentPage() {
+    return currentPage;
+}
+
+function nextPage() {
+    if (currentPage < pageCounter) {
+        currentPage++;
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+    }
+}
 
 
 /**
@@ -155,19 +171,16 @@ let InMemory = (function (){
 app.get('/', function(req, res) {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
+    console.log("Current Page: " + getCurrentPage())
     res.render('gta', {
         taglist: InMemory.getTagList(),
         lat: lat,
         long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
-
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        nrOfTags: InMemory.getTagList().length,
+        partTags: someTags,
+        page: getCurrentPage()
     });
-    //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
-    //Dann res.send(); um Cookies zu senden
-    //console.log(req.cookies);
-    //console.log(req.signedCookies);
-    //var val = req.signedCookies. --name vom cookie--
-    //Cookie löschen: res.clearCookie(name)
 });
 
 /**
@@ -183,7 +196,7 @@ app.get('/', function(req, res) {
  * Die Objekte liegen in einem Standard Radius um die Koordinate (lat, lon).
  */
 
-// TODO: CODE ERGÄNZEN START
+
 app.post('/tagging', function (req, res)  {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
@@ -201,7 +214,9 @@ app.post('/tagging', function (req, res)  {
         taglist: InMemory.searchRadius(lat,long,5),
         lat: lat,
         long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        partTags: someTags,
+        page: getCurrentPage()
     })
 });
 /**
@@ -216,7 +231,6 @@ app.post('/tagging', function (req, res)  {
  * Falls 'term' vorhanden ist, wird nach Suchwort gefiltert.
  */
 
-// TODO: CODE ERGÄNZEN
 app.post('/discovery', function(req, res) {
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
@@ -228,14 +242,18 @@ app.post('/discovery', function(req, res) {
             taglist: InMemory.searchTerm(term),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchTerm(term))
+            datatags: JSON.stringify(InMemory.searchTerm(term)),
+            partTags: someTags,
+            page: getCurrentPage()
         })
     } else {
         res.render('gta', {
             taglist: InMemory.searchRadius(lat, long, 5),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchRadius(lat, long, 5))
+            datatags: JSON.stringify(InMemory.searchRadius(lat, long, 5)),
+            partTags: someTags,
+            page: getCurrentPage()
         })
     }});
 
@@ -254,14 +272,60 @@ app.get('/geotags', function(req, res){
     let lon = req.query.long;
     let term = req.query.term;
 
-
     if(term === undefined){
         res.status(200).json(InMemory.getTagList());
     } else if(term === ""){
         res.status(200).json(InMemory.getTagList());
     } else {
-        res.status(200).json(InMemory.searchTerm(term));
+        //res.status(200).json(InMemory.searchTerm(term));
+        res.status(200).json(someTags);
     }
+});
+
+app.get('/geotags/previous', function(req, res){
+    prevPage();
+    refreshPartTags();
+    res.render('gta', {
+        page: getCurrentPage()
+    });
+    res.status(200).json(someTags);
+});
+
+app.get('/geotags/next', function(req, res){
+    nextPage();
+    refreshPartTags();
+
+    res.render('gta', {
+        page: getCurrentPage()
+    });
+    res.status(200).json(someTags);
+});
+
+app.get('/geotags/first', function(req, res){
+    refreshPartTags();
+    res.render('gta', {
+        page: getCurrentPage()
+    });
+    res.status(200).json(someTags);
+});
+
+app.get('/geotags/second', function(req, res){
+    nextPage();
+    refreshPartTags();
+    res.render('gta', {
+        page: getCurrentPage()
+    });
+    res.status(200).json(someTags);
+});
+
+app.get('/geotags/third', function(req, res){
+    nextPage();
+    nextPage();
+    refreshPartTags();
+    res.render('gta', {
+        page: getCurrentPage()
+    });
+    res.status(200).json(someTags);
 });
 
 app.get('/geotags/:id',function(req, res){
