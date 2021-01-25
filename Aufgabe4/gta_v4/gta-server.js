@@ -105,9 +105,6 @@ let InMemory = (function (){
         add: function (tag) {
             tag.id = id++;
             tagList.push(tag);
-            // if(tagList.length > 5*pageCounter) {
-            //     pageCounter++;
-            // }
             refreshPartTags();
         },
 
@@ -117,9 +114,6 @@ let InMemory = (function (){
 
         delete: function (GeoTag) {
             tagList.splice(tagList.indexOf(GeoTag), 1);
-            // if(tagList.length < 5*pageCounter) {
-            //     pageCounter--;
-            // }
             refreshPartTags();
             //tagList.splice(GeoTag.getCurrentPosition(), 1);
         }
@@ -128,14 +122,16 @@ let InMemory = (function (){
 
 
 
-let someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+5);
+let someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+8);
+let pg_array = Array(pageCounter).fill().map((x,i)=>i+1)
 
 function refreshPartTags() {
-    pageCounter = Math.floor(InMemory.getTagList().length / 5);
-    if (InMemory.getTagList().length % 5 > 0) {
+    pageCounter = Math.floor(InMemory.getTagList().length / 8);
+    pg_array = Array(pageCounter).fill().map((x,i)=>i+1)
+    if (InMemory.getTagList().length % 8 > 0) {
         pageCounter++;
     }
-    someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+5);
+    someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+8);
 }
 
 function getCurrentPage() {
@@ -176,7 +172,8 @@ app.get('/', function(req, res) {
         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
         nrOfTags: InMemory.getTagList().length,
         partTags: someTags,
-        page: getCurrentPage()
+        page: getCurrentPage(),
+        pages: pg_array
     });
 });
 
@@ -213,7 +210,8 @@ app.post('/tagging', function (req, res)  {
         long: long,
         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
         partTags: someTags,
-        page: getCurrentPage()
+        page: getCurrentPage(),
+        pages: pg_array
     })
 });
 /**
@@ -242,7 +240,8 @@ app.post('/discovery', function(req, res) {
             long: long,
             datatags: JSON.stringify(InMemory.searchTerm(term)),
             partTags: someTags,
-            page: getCurrentPage()
+            page: getCurrentPage(),
+            pages: pg_array
         })
     } else {
         res.render('gta', {
@@ -251,7 +250,8 @@ app.post('/discovery', function(req, res) {
             long: long,
             datatags: JSON.stringify(InMemory.searchRadius(lat, long, 5)),
             partTags: someTags,
-            page: getCurrentPage()
+            page: getCurrentPage(),
+            pages: pg_array
         })
     }});
 
@@ -282,48 +282,111 @@ app.get('/geotags', function(req, res){
 app.get('/geotags/previous', function(req, res){
     prevPage();
     refreshPartTags();
-    res.render('gta', {
-        page: getCurrentPage()
+    var lat = req.body.hid_latitude;
+    var long = req.body.hid_longitude;
+
+    res.status(200).json(someTags).render('gta', {
+        taglist: InMemory.getTagList(),
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        nrOfTags: InMemory.getTagList().length,
+        partTags: someTags,
+        page: getCurrentPage(),
+        pages: pg_array
     });
-    res.status(200).json(someTags);
 });
 
 app.get('/geotags/next', function(req, res){
     nextPage();
     refreshPartTags();
 
-    res.render('gta', {
-        page: getCurrentPage()
+    var lat = req.body.hid_latitude;
+    var long = req.body.hid_longitude;
+
+    res.status(200).json(someTags).render('gta', {
+        taglist: InMemory.getTagList(),
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        nrOfTags: InMemory.getTagList().length,
+        partTags: someTags,
+        page: getCurrentPage(),
+        pages: pg_array
     });
-    res.status(200).json(someTags);
 });
 
-app.get('/geotags/first', function(req, res){
+app.get('/geotags/pg', function(req, res){
+    var lat = req.body.hid_latitude;
+    var long = req.body.hid_longitude;
+    currentPage = req.body.pgbtn;
     refreshPartTags();
-    res.render('gta', {
-        page: getCurrentPage()
+
+    res.status(200).json(someTags).render('gta', {
+        taglist: InMemory.getTagList(),
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        nrOfTags: InMemory.getTagList().length,
+        partTags: someTags,
+        page: getCurrentPage(),
+        pages: pg_array
     });
-    res.status(200).json(someTags);
 });
 
-app.get('/geotags/second', function(req, res){
-    nextPage();
-    refreshPartTags();
-    res.render('gta', {
-        page: getCurrentPage()
-    });
-    res.status(200).json(someTags);
-});
-
-app.get('/geotags/third', function(req, res){
-    nextPage();
-    nextPage();
-    refreshPartTags();
-    res.render('gta', {
-        page: getCurrentPage()
-    });
-    res.status(200).json(someTags);
-});
+// app.get('/geotags/first', function(req, res){
+//     refreshPartTags();
+//     var lat = req.body.hid_latitude;
+//     var long = req.body.hid_longitude;
+//
+//     res.status(200).json(someTags).render('gta', {
+//         taglist: InMemory.getTagList(),
+//         lat: lat,
+//         long: long,
+//         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+//         nrOfTags: InMemory.getTagList().length,
+//         partTags: someTags,
+//         page: getCurrentPage(),
+//         pages: pg_array
+//     });
+// });
+//
+// app.get('/geotags/second', function(req, res){
+//     nextPage();
+//     refreshPartTags();
+//     var lat = req.body.hid_latitude;
+//     var long = req.body.hid_longitude;
+//
+//     res.status(200).json(someTags).render('gta', {
+//         taglist: InMemory.getTagList(),
+//         lat: lat,
+//         long: long,
+//         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+//         nrOfTags: InMemory.getTagList().length,
+//         partTags: someTags,
+//         page: getCurrentPage(),
+//         pages: pg_array
+//     });
+// });
+//
+// app.get('/geotags/third', function(req, res){
+//     nextPage();
+//     nextPage();
+//     refreshPartTags();
+//     var lat = req.body.hid_latitude;
+//     var long = req.body.hid_longitude;
+//
+//     res.status(200).json(someTags).render('gta', {
+//         taglist: InMemory.getTagList(),
+//         lat: lat,
+//         long: long,
+//         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+//         nrOfTags: InMemory.getTagList().length,
+//         partTags: someTags,
+//         page: currentPage,
+//         pages: pg_array
+//     });
+// });
 
 app.get('/geotags/:id',function(req, res){
     let id = req.params.id;

@@ -17,6 +17,7 @@ var firstPage = document.getElementById("firstPage");
 var secondPage = document.getElementById("secondPage");
 var thirdPage = document.getElementById("thirdPage");
 var nextPage = document.getElementById("nextPage");
+var pageBtn = document.getElementById("pg_btn");
 
 var GeoTag = function (lat, lon, name, hashtag) {
     this.latitude = lat;
@@ -83,23 +84,29 @@ nextPage.addEventListener("click", function(){
     ajax.send(null);
 })
 
-firstPage.addEventListener("click", function(){
-    ajax.open("GET", "/geotags/first", true);
+pageBtn.addEventListener("click", function(){
+    ajax.open("GET", "/geotags/pg", true);
     ajax.responseType = "json";
     ajax.send(null);
 })
 
-secondPage.addEventListener("click", function(){
-    ajax.open("GET", "/geotags/second", true);
-    ajax.responseType = "json";
-    ajax.send(null);
-})
-
-thirdPage.addEventListener("click", function(){
-    ajax.open("GET", "/geotags/third", true);
-    ajax.responseType = "json";
-    ajax.send(null);
-})
+// firstPage.addEventListener("click", function(){
+//     ajax.open("GET", "/geotags/first", true);
+//     ajax.responseType = "json";
+//     ajax.send(null);
+// })
+//
+// secondPage.addEventListener("click", function(){
+//     ajax.open("GET", "/geotags/second", true);
+//     ajax.responseType = "json";
+//     ajax.send(null);
+// })
+//
+// thirdPage.addEventListener("click", function(){
+//     ajax.open("GET", "/geotags/third", true);
+//     ajax.responseType = "json";
+//     ajax.send(null);
+// })
 
 //TODO: Karte wird nicht aktualisiert und Tags werden nicht angezeigt wenn Suche ohne Suchbegriff eingegeben wird
 

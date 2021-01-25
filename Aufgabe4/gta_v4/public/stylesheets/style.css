@@ -39,6 +39,14 @@ main {
   align-items: flex-start;
 }
 
+#pg_buttons {
+  color: white;
+  background: #00B7FF;
+  padding: 6px;
+  margin: 6px;
+  display: inline;
+}
+
 @media screen and (max-width: 950px) {
   main {
     flex-wrap: wrap;
