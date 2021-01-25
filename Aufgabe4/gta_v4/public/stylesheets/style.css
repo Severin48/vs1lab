@@ -39,6 +39,14 @@ main {
   align-items: flex-start;
 }
 
+#pg_btns {
+  color: white;
+  background: #00B7FF;
+  padding: 6px;
+  margin: 6px;
+  display: inline;
+}
+
 #pg_buttons {
   color: white;
   background: #00B7FF;
