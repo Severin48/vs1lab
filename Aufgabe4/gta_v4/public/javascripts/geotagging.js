@@ -194,7 +194,8 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
                 tryLocate(updateLocationFields, showErrorMessage);
             else {
                 const taglist_json = document.getElementById('result-img').getAttribute('data-tags');
-                document.getElementById('result-img').src = getLocationMapSrc(document.getElementById('hidden_latitude').value, document.getElementById('hidden_longitude').value, JSON.parse(taglist_json));
+
+                document.getElementById('result-img').src = getLocationMapSrc(document.getElementById('latitude_geotag').value, document.getElementById('longitude_geotag').value, JSON.parse(taglist_json));
             }
         }
     }; // ... Ende öffentlicher Teil
@@ -211,6 +212,3 @@ $(function () {
     gtaLocator.updateLocation();
 });
 
-// ajax.open("GET", "", true); //URL einsetzen || "POST" für Speichern
-//
-// ajax.send(null);
