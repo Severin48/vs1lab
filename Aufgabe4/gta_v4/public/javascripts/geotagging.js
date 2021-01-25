@@ -17,7 +17,7 @@ var firstPage = document.getElementById("firstPage");
 var secondPage = document.getElementById("secondPage");
 var thirdPage = document.getElementById("thirdPage");
 var nextPage = document.getElementById("nextPage");
-var pageBtn = document.getElementById("pg_btn");
+var pageBtn = document.getElementById("pg_buttons");
 
 var GeoTag = function (lat, lon, name, hashtag) {
     this.latitude = lat;

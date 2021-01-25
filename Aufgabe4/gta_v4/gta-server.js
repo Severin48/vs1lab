@@ -319,8 +319,32 @@ app.get('/geotags/next', function(req, res){
 app.get('/geotags/pg', function(req, res){
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
-    currentPage = req.body.pgbtn;
+    currentPage = req.body.pgbtn.value;
+    console.log("Page: " + currentPage)
     refreshPartTags();
+
+    // res.render('gta', {
+    //     taglist: InMemory.getTagList(),
+    //     lat: lat,
+    //     long: long,
+    //     datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+    //     nrOfTags: InMemory.getTagList().length,
+    //     partTags: someTags,
+    //     page: getCurrentPage(),
+    //     pages: pg_array
+    // });
+
+    // res.render('gta', {
+    //     taglist: InMemory.getTagList(),
+    //     lat: lat,
+    //     long: long,
+    //     datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+    //     nrOfTags: InMemory.getTagList().length,
+    //     partTags: someTags,
+    //     page: getCurrentPage(),
+    //     pages: pg_array
+    // });
+    // res.status(200).json(someTags);
 
     res.status(200).json(someTags).render('gta', {
         taglist: InMemory.getTagList(),
