@@ -38,13 +38,40 @@ main {
   width: 100%;
   align-items: flex-start;
 }
-
-#pg_buttons {
+#pg_buttons li {
   color: white;
   background: #00B7FF;
   padding: 6px;
   margin: 6px;
   display: inline;
+}
+#previousPage{
+  color: white;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+#previousPage:hover{
+  color: darkblue;
+  cursor: pointer;
+}
+#nextPage{
+  color: white;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+#nextPage:hover{
+  color: darkblue;
+  cursor: pointer;
+}
+#pg_btn{
+  color: white;
+  background: #00B7FF;
+  padding: 3px;
+  margin: 5px;
+  display: inline;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+#pg_btn:hover{
+  color: darkblue;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 950px) {
