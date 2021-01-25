@@ -46,6 +46,7 @@ function GeoTag (latitude, longitude, name, hashtag, id){
     this.hashtag = hashtag;
     this.id = id
 
+
     this.getLat = function(){
         return this.latitude;
     };
@@ -260,7 +261,7 @@ app.post('/geotags', function(req, res){
 
     //console.log(InMemory.getTagList());
     res.header('Location', req.url + "/" + id);
-    res.status(201).json(InMemory.getTagList());
+    res.status(201).json(someTags);
 });
 
 app.get('/geotags', function(req, res){
@@ -282,6 +283,7 @@ app.get('/geotags', function(req, res){
 app.get('/geotags/previous', function(req, res){
     prevPage();
     refreshPartTags();
+    console.log("Current Page(previous): "+getCurrentPage());
     res.render('gta', {
         page: getCurrentPage()
     });
@@ -291,7 +293,7 @@ app.get('/geotags/previous', function(req, res){
 app.get('/geotags/next', function(req, res){
     nextPage();
     refreshPartTags();
-
+    console.log("Current Page(next): "+getCurrentPage());
     res.render('gta', {
         page: getCurrentPage()
     });
@@ -300,6 +302,7 @@ app.get('/geotags/next', function(req, res){
 
 app.get('/geotags/first', function(req, res){
     refreshPartTags();
+    console.log("Current Page(first): "+getCurrentPage());
     res.render('gta', {
         page: getCurrentPage()
     });
@@ -309,6 +312,7 @@ app.get('/geotags/first', function(req, res){
 app.get('/geotags/second', function(req, res){
     nextPage();
     refreshPartTags();
+    console.log("Current Page(second): "+getCurrentPage());
     res.render('gta', {
         page: getCurrentPage()
     });
@@ -319,6 +323,7 @@ app.get('/geotags/third', function(req, res){
     nextPage();
     nextPage();
     refreshPartTags();
+    console.log("Current Page(third): "+getCurrentPage());
     res.render('gta', {
         page: getCurrentPage()
     });
