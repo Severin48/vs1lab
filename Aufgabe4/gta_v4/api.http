@@ -1,12 +1,64 @@
-GET http://localhost:3000/geotags
-#####
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "41.23489",
+  "longitude": "12.12341",
+  "name": "Karlsruhe",
+  "hashtag": "#KA2"
+}
+####
 
 POST http://localhost:3000/geotags
 Content-Type: application/json
 
 {
   "latitude": "40.23489",
+  "longitude": "10.12341",
+  "name": "Karlsruhe",
+  "hashtag": "#KA3"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "42.23489",
   "longitude": "14.12341",
+  "name": "Karlsruhe",
+  "hashtag": "#KA4"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "38.23489",
+  "longitude": "14.8394",
+  "name": "Karlsruhe",
+  "hashtag": "#KA"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "40.45233",
+  "longitude": "14.12352",
+  "name": "Karlsruhe",
+  "hashtag": "#KA"
+}
+####
+
+POST http://localhost:3000/geotags
+Content-Type: application/json
+
+{
+  "latitude": "40.6234",
+  "longitude": "14.62345",
   "name": "Karlsruhe",
   "hashtag": "#KA"
 }
@@ -15,15 +67,3 @@ Content-Type: application/json
 GET http://localhost:3000/geotags/0
 ####
 
-PUT http://localhost:3000/geotags/0
-Content-Type: application/json
-
-{
-  "latitude": "60.1234",
-  "longitude": "14.12341",
-  "name": "iwi",
-  "hashtag": "#edu"
-}
-####
-
-DELETE http://localhost:3000/geotags/0

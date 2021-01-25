@@ -13,14 +13,12 @@ var http = require('http');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
-// var credentials = require("./credentials.js");
-// var cookies = require('cookie-parser');
+
 
 
 var app;
-app = express(); //npm install express@">=3.0.0 <4.0.0" --save
-//var app = connect(); //npm install connect https://github.com/senchalabs/connect#middleware
-// app.use(cookies(credentials.cookieSecret));
+app = express();
+
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
@@ -77,6 +75,7 @@ function GeoTag (latitude, longitude, name, hashtag, id){
 let InMemory = (function (){
     let tagList = [];
     let id = 0;
+    const results = {};
 
     return {
         searchRadius: function (latitude, longitude, radius) {
@@ -115,7 +114,30 @@ let InMemory = (function (){
         delete: function (GeoTag) {
             tagList.splice(tagList.indexOf(GeoTag), 1);
             //tagList.splice(GeoTag.getCurrentPosition(), 1);
-        }
+        },
+        getTagListResult: function(page , limit){
+            const startIndex = (page - 1)*limit;
+            const endIndex = page*limit;
+
+            if (endIndex < tagList.length){
+                results.next = {
+                    page: page +1,
+                    limit: limit
+                }
+            }
+
+
+            results.results = tagList.slice(startIndex,endIndex);
+            return results.results;
+        },
+        getTagListPrevious: function (page , limit){
+            const startIndex = (page-1)*limit;
+        if (startIndex > 0){
+            results.previous = {
+                page: page -1,
+                limit: limit
+            }
+        }}
     }
 })();
 
@@ -222,7 +244,8 @@ app.post('/geotags', function(req, res){
 
     //console.log(InMemory.getTagList());
     res.header('Location', req.url + "/" + id);
-    res.status(201).json(InMemory.getTagList());
+   // res.status(201).json(InMemory.getTagList());
+    res.status(201).json(InMemory.getTagListResult(1,10));
 });
 
 app.get('/geotags', function(req, res){

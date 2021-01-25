@@ -44,7 +44,7 @@
 					   required/>
 				<label>Hashtag:</label>
 				<input id="hashtag_geotag" type="text" name="hashtag_geotag"
-					   placeholder="# + max. 10 letters" maxlength="11" pattern="\#{a-zA-Z}">
+					   placeholder="# + max. 10 letters" maxlength="11" pattern="#[a-zA-Z0-9_]*">
 				<input id="submit_geotag" type="button" value="Submit" /> <!-- TODO: CHANGED FROM submit to button -->
 				<!-- ############### Aufgabe1a Form1 Ende -->
 			</form>
@@ -68,10 +68,19 @@
 
 		<div class="taglist">
 			<ul id="results">
-				<% if (taglist !== undefined) taglist.forEach(function(gtag) { %>
-					<li><%= gtag.name %> ( <%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %> </li>
+				<% if (taglist !== undefined)   taglist.forEach(function(gtag) { %>
+					    <li><%= gtag.name %> ( <%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %> </li>
 				<% }); %>
 			</ul>
+
+            <ul id = "button">
+				<button> << </button>
+				<button id= "previous"> <% previous %><<</button>
+				<button id= > <% current %></button>
+				<button> <% next %>>></button>
+				<button> >> </button>
+			</ul>
+
 		</div>
 
 		<div class="tagmap">
