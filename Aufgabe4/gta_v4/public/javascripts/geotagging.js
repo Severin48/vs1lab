@@ -12,6 +12,9 @@ console.log("The script is going to start...");
 let ajax = new XMLHttpRequest();
 var tagButton = document.getElementById("submit_geotag");
 var disButton = document.getElementById("discovery_apply");
+var nextButton = document.getElementById("nextPage");
+var previousButton = document.getElementById("previousPage");
+var pgButton = document.getElementById("pg_btn");
 
 var GeoTag = function (lat, lon, name, hashtag) {
     this.latitude = lat;
@@ -65,6 +68,69 @@ ajax.onreadystatechange = function() {
         gtaLocator.updateLocation();
     }
 }
+previousButton.addEventListener("click", function(){
+    console.log("previous");
+    ajax.open("GET", "/geotags/previous", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+    previousButton.onreadystatechange = function() {
+        if(ajax.readyState == 4){
+            let resultArray = ajax.response;
+            let results = "";
+
+            resultArray.forEach(function(tag){
+                results += "<li>";
+                results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
+                results += "</li>";
+            });
+            $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+            $("#results").html(results);
+            gtaLocator.updateLocation();
+        }
+    }
+})
+nextButton.addEventListener("click", function(){
+    console.log("next");
+    ajax.open("GET", "/geotags/next", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+    nextButton.onreadystatechange = function() {
+        if(ajax.readyState == 4){
+            let resultArray = ajax.response;
+            let results = "";
+
+            resultArray.forEach(function(tag){
+                results += "<li>";
+                results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
+                results += "</li>";
+            });
+            $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+            $("#results").html(results);
+            gtaLocator.updateLocation();
+        }
+    }
+})
+pgButton.addEventListener("click", function(){
+    console.log("page");
+    ajax.open("GET", "/geotags/pg", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+    pgButton.onreadystatechange = function() {
+        if(ajax.readyState == 4){
+            let resultArray = ajax.response;
+            let results = "";
+
+            resultArray.forEach(function(tag){
+                results += "<li>";
+                results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
+                results += "</li>";
+            });
+            $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+            $("#results").html(results);
+            gtaLocator.updateLocation();
+        }
+    }
+})
 
 //TODO: Karte wird nicht aktualisiert und Tags werden nicht angezeigt wenn Suche ohne Suchbegriff eingegeben wird
 

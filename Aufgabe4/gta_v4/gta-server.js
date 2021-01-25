@@ -119,6 +119,69 @@ let InMemory = (function (){
     }
 })();
 
+let FilterList = (function (){
+    let tagList = InMemory.getTagList();
+    let listChanged = [];
+    var currentPage = 1;
+    var pageCounter=1;
+    listChanged = Array(pageCounter).fill().map((x,i)=>i+1);
+    var searchPage = function(id){
+        var id = id+1;
+        if (id % 5 >0 ){
+            currentPage = (id / 5) +1;
+        } else {
+            currentPage = id/5;
+        }
+        return currentPage;
+    }
+    return{
+        add: function (tag){
+            InMemory.add(tag);
+            if(tag.id > 4){
+                pageCounter++;
+            }
+            searchPage(tag.id);
+            var endIndex = currentPage*5-1
+            var begIndex = endIndex-5;
+            return tagList.slice(begIndex, endIndex);
+        },
+        next: function () {
+            if (pageCounter > currentPage){
+                currentPage = currentPage++;
+            }
+            var endIndex = currentPage*5-1
+            var begIndex = endIndex-5;
+            return tagList.slice(begIndex, endIndex);
+        },
+        previous: function(){
+            if (currentPage !== 1){
+                currentPage = currentPage--;
+            }
+            var endIndex = currentPage*5-1
+            var begIndex = endIndex-5;
+            return tagList.slice(begIndex, endIndex);
+        },
+        explicit: function(page){
+            var endIndex = page*5-1
+            var begIndex = endIndex-5;
+            return tagList.slice(begIndex, endIndex);
+        },
+        searchRadius: function(latitude, longitude, radius){
+            InMemory.searchRadius(latitude, longitude, radius);
+            return tagList.slice(0,4);
+        },
+        searchTerm: function (term) {
+            InMemory.searchTerm(term);
+            return tagList.slice(0,4);
+        },
+        getCurrentPage: function(){
+            return currentPage;
+        },
+        getSomeList: function(){
+            return listChanged;
+        }
+    }
+})();
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
@@ -137,7 +200,9 @@ app.get('/', function(req, res) {
         taglist: InMemory.getTagList(),
         lat: lat,
         long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        page: FilterList.getCurrentPage(),
+        pages: FilterList.getSomeList()
 
     });
     //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
@@ -218,11 +283,14 @@ app.post('/discovery', function(req, res) {
     }});
 
 app.post('/geotags', function(req, res){
-    let id = InMemory.add(req.body);
+    let id = FilterList.add(req.body);
 
-    //console.log(InMemory.getTagList());
-    res.header('Location', req.url + "/" + id);
-    res.status(201).json(InMemory.getTagList());
+   console.log(id);
+    //res.header('Location', req.url + "/" + id);
+    res.status(201).json(id,{
+        page: FilterList.getCurrentPage(),
+            pages: FilterList.getSomeList()
+    });
 });
 
 app.get('/geotags', function(req, res){
@@ -233,12 +301,47 @@ app.get('/geotags', function(req, res){
 
 
     if(term === undefined){
-        res.status(200).json(InMemory.getTagList());
+        res.status(200).json(InMemory.getTagList(),{
+            page: FilterList.getCurrentPage(),
+            pages: FilterList.getSomeList()
+        });
     } else if(term === ""){
-        res.status(200).json(InMemory.getTagList());
+        res.status(200).json(InMemory.getTagList(),{
+            page: FilterList.getCurrentPage(),
+            pages: FilterList.getSomeList()
+        });
     } else {
-        res.status(200).json(InMemory.searchTerm(term));
+        res.status(200).json(InMemory.searchTerm(term),{
+            page: FilterList.getCurrentPage(),
+            pages: FilterList.getSomeList()
+        });
     }
+});
+
+app.get('/geotags/previous', function(req,res){
+    res.status(200).json(
+        FilterList.previous(),{
+            page:FilterList.getCurrentPage(),
+            pages:FilterList.getSomeList()
+        }
+    )
+});
+
+app.get('/geotags/next', function(req,res){
+    res.status(200).json(FilterList.next(),{
+        page:FilterList.getCurrentPage(),
+        pages:FilterList.getSomeList()
+    })
+});
+
+app.get('/geotags/pg', function(req,res){
+    var page = req.body.page;
+    res.status(200).json(
+        FilterList.explicit(page),{
+            page: FilterList.getCurrentPage(),
+            pages: FilterList.getSomeList()
+        }
+    )
 });
 
 app.get('/geotags/:id',function(req, res){

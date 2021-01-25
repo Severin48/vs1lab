@@ -72,6 +72,19 @@
 					<li><%= gtag.name %> ( <%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %> </li>
 				<% }); %>
 			</ul>
+			<ul id="pg_buttons">
+                <li>
+                    <a id="previousPage"> << </a>
+                </li>
+                <% if (pages !== undefined) pages.forEach(function(page) { %>
+                <li >
+                	<a id="pg_btn"  name="pgbtn"value="<%= page %>"> <%= page %> </a>
+                </li>
+                <% }); %>
+                <li>
+                    <a id="nextPage"> >> </a>
+                </li>
+            </ul>
 		</div>
 
 		<div class="tagmap">
