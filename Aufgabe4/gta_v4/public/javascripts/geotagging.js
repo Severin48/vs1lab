@@ -12,6 +12,10 @@ console.log("The script is going to start...");
 let ajax = new XMLHttpRequest();
 var tagButton = document.getElementById("submit_geotag");
 var disButton = document.getElementById("discovery_apply");
+var previousPage = document.getElementById("previousPage");
+
+var nextPage = document.getElementById("nextPage");
+var pageBtn = document.getElementById("pg_buttons");
 
 var GeoTag = function (lat, lon, name, hashtag) {
     this.latitude = lat;
@@ -32,6 +36,24 @@ tagButton.addEventListener("click", function(){
     let name = document.getElementById("name_geotag").value;
     let hashtag = document.getElementById("hashtag_geotag").value;
     ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
+
+    tagButton.onreadystatechange = function() {
+        if(tagButton.readyState == 4){
+            console.log("Ready!!!");
+            console.log(ajax.response);
+            let resultArray = ajax.response;
+            let results = "";
+
+            resultArray.forEach(function(tag){
+                results += "<li>";
+                results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
+                results += "</li>";
+            });
+            $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+            $("#results").html(results);
+            gtaLocator.updateLocation();
+        }
+    }
 
 })
 
@@ -65,6 +87,25 @@ ajax.onreadystatechange = function() {
         gtaLocator.updateLocation();
     }
 }
+
+previousPage.addEventListener("click", function(){
+    ajax.open("GET", "/geotags/previous", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+})
+
+nextPage.addEventListener("click", function(){
+    ajax.open("GET", "/geotags/next", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+})
+
+pageBtn.addEventListener("click", function(){
+    ajax.open("GET", "/geotags/pg", true);
+    ajax.responseType = "json";
+    ajax.send(null);
+})
+
 
 //TODO: Karte wird nicht aktualisiert und Tags werden nicht angezeigt wenn Suche ohne Suchbegriff eingegeben wird
 
@@ -194,11 +235,10 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
                 tryLocate(updateLocationFields, showErrorMessage);
             else {
                 const taglist_json = document.getElementById('result-img').getAttribute('data-tags');
-
                 document.getElementById('result-img').src = getLocationMapSrc(document.getElementById('latitude_geotag').value, document.getElementById('longitude_geotag').value, JSON.parse(taglist_json));
             }
         }
-    }; // ... Ende öffentlicher Teil
+    };
 })(GEOLOCATIONAPI);
 
 /**
@@ -207,8 +247,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 
-
 $(function () {
     gtaLocator.updateLocation();
 });
-

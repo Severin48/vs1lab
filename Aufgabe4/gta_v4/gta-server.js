@@ -13,14 +13,10 @@ var http = require('http');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
-// var credentials = require("./credentials.js");
-// var cookies = require('cookie-parser');
 
 
 var app;
-app = express(); //npm install express@">=3.0.0 <4.0.0" --save
-//var app = connect(); //npm install connect https://github.com/senchalabs/connect#middleware
-// app.use(cookies(credentials.cookieSecret));
+app = express();
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
@@ -73,10 +69,14 @@ function GeoTag (latitude, longitude, name, hashtag, id){
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-// TODO: CODE ERGÄNZEN
+let pageCounter = 1;
+let currentPage = 1;
+
 let InMemory = (function (){
     let tagList = [];
     let id = 0;
+
+
 
     return {
         searchRadius: function (latitude, longitude, radius) {
@@ -92,7 +92,7 @@ let InMemory = (function (){
         searchTerm: function (term) {
             return tagList.filter(function (entry) {
 
-                   return entry.name.includes(term)|| entry.hashtag.includes(term)
+                return entry.name.includes(term)|| entry.hashtag.includes(term)
 
             });
 
@@ -105,7 +105,11 @@ let InMemory = (function (){
         add: function (tag) {
             tag.id = id++;
             tagList.push(tag);
-
+            pages = (tagList.length) / 5;
+            if (tagList.length % 5 > 0){
+                pages++;
+            }
+            refreshPartTags();
         },
 
         getTagList: function() {
@@ -114,10 +118,41 @@ let InMemory = (function (){
 
         delete: function (GeoTag) {
             tagList.splice(tagList.indexOf(GeoTag), 1);
+            refreshPartTags();
             //tagList.splice(GeoTag.getCurrentPosition(), 1);
         }
     }
 })();
+
+
+
+let someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+8);
+let pg_array = Array(pageCounter).fill().map((x,i)=>i+1)
+
+function refreshPartTags() {
+    pageCounter = Math.floor(InMemory.getTagList().length / 8);
+    pg_array = Array(pageCounter).fill().map((x,i)=>i+1)
+    if (InMemory.getTagList().length % 8 > 0) {
+        pageCounter++;
+    }
+    someTags = InMemory.getTagList().slice(getCurrentPage(), getCurrentPage()+8);
+}
+
+function getCurrentPage() {
+    return currentPage;
+}
+
+function nextPage() {
+    if (currentPage < pageCounter) {
+        currentPage++;
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+    }
+}
 
 
 /**
@@ -133,19 +168,17 @@ let InMemory = (function (){
 app.get('/', function(req, res) {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
+    console.log("Current Page: " + getCurrentPage())
     res.render('gta', {
         taglist: InMemory.getTagList(),
         lat: lat,
         long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
-
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        nrOfTags: InMemory.getTagList().length,
+        partTags: someTags,
+        page: getCurrentPage(),
+        pages: pg_array
     });
-    //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
-    //Dann res.send(); um Cookies zu senden
-    //console.log(req.cookies);
-    //console.log(req.signedCookies);
-    //var val = req.signedCookies. --name vom cookie--
-    //Cookie löschen: res.clearCookie(name)
 });
 
 /**
@@ -179,7 +212,10 @@ app.post('/tagging', function (req, res)  {
         taglist: InMemory.searchRadius(lat,long,5),
         lat: lat,
         long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        partTags: someTags,
+        page: getCurrentPage(),
+        pages: pg_array
     })
 });
 /**
@@ -206,14 +242,20 @@ app.post('/discovery', function(req, res) {
             taglist: InMemory.searchTerm(term),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchTerm(term))
+            datatags: JSON.stringify(InMemory.searchTerm(term)),
+            partTags: someTags,
+            page: getCurrentPage(),
+            pages: pg_array
         })
     } else {
         res.render('gta', {
             taglist: InMemory.searchRadius(lat, long, 5),
             lat: lat,
             long: long,
-            datatags: JSON.stringify(InMemory.searchRadius(lat, long, 5))
+            datatags: JSON.stringify(InMemory.searchRadius(lat, long, 5)),
+            partTags: someTags,
+            page: getCurrentPage(),
+            pages: pg_array
         })
     }});
 
@@ -231,15 +273,73 @@ app.get('/geotags', function(req, res){
     let lon = req.query.long;
     let term = req.query.term;
 
-
     if(term === undefined){
         res.status(200).json(InMemory.getTagList());
     } else if(term === ""){
         res.status(200).json(InMemory.getTagList());
     } else {
-        res.status(200).json(InMemory.searchTerm(term));
+        //res.status(200).json(InMemory.searchTerm(term));
+        res.status(200).json(someTags);
     }
 });
+
+app.get('/geotags/previous', function(req, res){
+    prevPage();
+    refreshPartTags();
+    var lat = req.body.hid_latitude;
+    var long = req.body.hid_longitude;
+
+    res.status(200).json(someTags).render('gta', {
+        taglist: InMemory.getTagList(),
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        nrOfTags: InMemory.getTagList().length,
+        partTags: someTags,
+        page: getCurrentPage(),
+        pages: pg_array
+    });
+});
+
+app.get('/geotags/next', function(req, res){
+    nextPage();
+    refreshPartTags();
+
+    var lat = req.body.hid_latitude;
+    var long = req.body.hid_longitude;
+
+    res.status(200).json(someTags).render('gta', {
+        taglist: InMemory.getTagList(),
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        nrOfTags: InMemory.getTagList().length,
+        partTags: someTags,
+        page: getCurrentPage(),
+        pages: pg_array
+    });
+});
+
+app.get('/geotags/pg', function(req, res){
+    var lat = req.body.hid_latitude;
+    var long = req.body.hid_longitude;
+    currentPage = req.body.pgbtn.value;
+    console.log("Page: " + currentPage)
+    refreshPartTags();
+
+
+    res.status(200).json(someTags).render('gta', {
+        taglist: InMemory.getTagList(),
+        lat: lat,
+        long: long,
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        nrOfTags: InMemory.getTagList().length,
+        partTags: someTags,
+        page: getCurrentPage(),
+        pages: pg_array
+    });
+});
+
 
 app.get('/geotags/:id',function(req, res){
     let id = req.params.id;
@@ -283,4 +383,3 @@ let server = http.createServer(app);
  */
 
 server.listen(port);
-

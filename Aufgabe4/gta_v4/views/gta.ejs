@@ -68,10 +68,20 @@
 
 		<div class="taglist">
 			<ul id="results">
-				<% if (taglist !== undefined) taglist.forEach(function(gtag) { %>
-					<li><%= gtag.name %> ( <%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %> </li>
-				<% }); %>
-			</ul>
+            				<% if (partTags !== undefined) partTags.forEach(function(gtag) { %>
+            					<li><%= gtag.name %> ( <%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %> </li>
+            				<% }); %>
+            			</ul>
+            			<ul id="pg_btns">
+            				<button id="previousPage"> << </button>
+            				<% if (pages !== undefined) pages.forEach(function(page) { %>
+            				<li id="pg_buttons">
+            					<button id="pg_btn" value=<%= page %> name="pgbtn"> <%= page %> </button>
+            				</li>
+            				<% }); %>
+            				<button id="nextPage"> >> </button>
+            			</ul>
+
 		</div>
 
 		<div class="tagmap">
