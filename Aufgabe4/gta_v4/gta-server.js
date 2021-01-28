@@ -260,7 +260,8 @@ app.post('/geotags', function(req, res){
 
     //console.log(InMemory.getTagList());
     res.header('Location', req.url + "/" + id);
-    res.status(201).json(InMemory.getTagList());
+    //res.status(201).json(InMemory.getTagList());
+    res.status(201).json(someTags);
 });
 
 app.get('/geotags', function(req, res){
@@ -270,9 +271,9 @@ app.get('/geotags', function(req, res){
     let term = req.query.term;
 
     if(term === undefined){
-        res.status(200).json(InMemory.getTagList());
+        res.status(200).json(someTags);
     } else if(term === ""){
-        res.status(200).json(InMemory.getTagList());
+        res.status(200).json(someTags);
     } else {
         //res.status(200).json(InMemory.searchTerm(term));
         res.status(200).json(someTags);
@@ -285,16 +286,22 @@ app.get('/geotags/previous', function(req, res){
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
 
-    res.status(200).json(someTags).render('gta', {
-        taglist: InMemory.getTagList(),
-        lat: lat,
-        long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
-        nrOfTags: InMemory.getTagList().length,
-        partTags: someTags,
-        page: getCurrentPage(),
-        pages: pg_array
-    });
+
+    res.status(200).json({
+            partTags: someTags,
+            page: getCurrentPage(),
+            pages: pg_array
+    })
+    // res.status(200).json(someTags).render('gta', {
+    //     taglist: InMemory.getTagList(),
+    //     lat: lat,
+    //     long: long,
+    //     datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+    //     nrOfTags: InMemory.getTagList().length,
+    //     partTags: someTags,
+    //     page: getCurrentPage(),
+    //     pages: pg_array
+    // });
 });
 
 app.get('/geotags/next', function(req, res){
@@ -304,22 +311,28 @@ app.get('/geotags/next', function(req, res){
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
 
-    res.status(200).json(someTags).render('gta', {
-        taglist: InMemory.getTagList(),
-        lat: lat,
-        long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
-        nrOfTags: InMemory.getTagList().length,
+    res.status(200).json({
         partTags: someTags,
         page: getCurrentPage(),
         pages: pg_array
-    });
+    })
+
+    // res.status(200).json(someTags).render('gta', {
+    //     taglist: InMemory.getTagList(),
+    //     lat: lat,
+    //     long: long,
+    //     datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+    //     nrOfTags: InMemory.getTagList().length,
+    //     partTags: someTags,
+    //     page: getCurrentPage(),
+    //     pages: pg_array
+    // });
 });
 
 app.get('/geotags/pg', function(req, res){
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
-    currentPage = req.body.pgbtn.value;
+    currentPage = req.body.pgbtn;
     console.log("Page: " + currentPage)
     refreshPartTags();
 

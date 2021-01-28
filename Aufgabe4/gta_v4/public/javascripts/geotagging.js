@@ -17,7 +17,7 @@ var firstPage = document.getElementById("firstPage");
 var secondPage = document.getElementById("secondPage");
 var thirdPage = document.getElementById("thirdPage");
 var nextPage = document.getElementById("nextPage");
-var pageBtn = document.getElementById("pg_buttons");
+var pageBtn = document.getElementById("pg_btn");
 
 var GeoTag = function (lat, lon, name, hashtag) {
     this.latitude = lat;
@@ -38,6 +38,17 @@ tagButton.addEventListener("click", function(){
     let name = document.getElementById("name_geotag").value;
     let hashtag = document.getElementById("hashtag_geotag").value;
     ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
+    tagButton.onreadystatechange = function () {
+        if(ajax.readyState == 4){
+            console.log("Ready!!!");
+            console.log(ajax.response);
+
+            // $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+            // $("#results").html(results);
+            // gtaLocator.updateLocation();
+        }
+    }
+
 
 })
 
@@ -85,7 +96,7 @@ nextPage.addEventListener("click", function(){
 })
 
 pageBtn.addEventListener("click", function(){
-    ajax.open("GET", "/geotags/pg", true);
+    ajax.open("GET", "/geotags/pg?"+"{page}", true);
     ajax.responseType = "json";
     ajax.send(null);
 })
