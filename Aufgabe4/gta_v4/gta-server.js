@@ -118,47 +118,59 @@ let InMemory = (function (){
         }
     }
 })();
-
+function Page (id){
+    this.id = id;
+}
 let FilterList = (function (){
-    let tagList = InMemory.getTagList();
+    let tagList = [];
     let listChanged = [];
-    var currentPage = 1;
+    let listPage = [1];
+
+    let currentPage = 1;
     var pageCounter=1;
+    let id = 0;
     listChanged = Array(pageCounter).fill().map((x,i)=>i+1);
     var searchPage = function(id){
-        var id = id+1;
-        if (id % 5 >0 ){
-            currentPage = (id / 5) +1;
+        var anzahl = id+1;
+        if (anzahl % 5 >0 ){
+            currentPage = Math.floor((anzahl / 5) +1);
         } else {
-            currentPage = id/5;
+            currentPage = Math.floor(anzahl/5);
         }
         return currentPage;
     }
     return{
+
         add: function (tag){
-            InMemory.add(tag);
-            if(tag.id > 4){
+            tag.id = id++;
+            tagList.push(tag);
+            console.log("ID: " + tag.id);
+
+            if((tag.id) % 5 === 0 && tag.id > 4){
                 pageCounter++;
+                listPage.push(currentPage+1);
             }
             searchPage(tag.id);
-            var endIndex = currentPage*5-1
+            var endIndex = currentPage*5;
             var begIndex = endIndex-5;
             return tagList.slice(begIndex, endIndex);
         },
         next: function () {
             if (pageCounter > currentPage){
-                currentPage = currentPage++;
+                currentPage = currentPage+1;
             }
-            var endIndex = currentPage*5-1
+            var endIndex = currentPage*5;
             var begIndex = endIndex-5;
             return tagList.slice(begIndex, endIndex);
         },
         previous: function(){
-            if (currentPage !== 1){
-                currentPage = currentPage--;
+            if (currentPage != 1){
+                currentPage = currentPage-1;
             }
-            var endIndex = currentPage*5-1
+
+            var endIndex = currentPage*5;
             var begIndex = endIndex-5;
+
             return tagList.slice(begIndex, endIndex);
         },
         explicit: function(page){
@@ -179,6 +191,9 @@ let FilterList = (function (){
         },
         getSomeList: function(){
             return listChanged;
+        },
+        getPageList: function(){
+            return listPage;
         }
     }
 })();
@@ -202,7 +217,7 @@ app.get('/', function(req, res) {
         long: long,
         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
         page: FilterList.getCurrentPage(),
-        pages: FilterList.getSomeList()
+        pages: FilterList.getPageList()
 
     });
     //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
@@ -285,12 +300,14 @@ app.post('/discovery', function(req, res) {
 app.post('/geotags', function(req, res){
     let id = FilterList.add(req.body);
 
-   console.log(id);
+   console.log("Pagarray:" + FilterList.getPageList());
     //res.header('Location', req.url + "/" + id);
-    res.status(201).json(id,{
+    res.status(201).json({
+        id,
         page: FilterList.getCurrentPage(),
-            pages: FilterList.getSomeList()
-    });
+        pages: FilterList.getPageList()
+    })
+
 });
 
 app.get('/geotags', function(req, res){
@@ -319,27 +336,32 @@ app.get('/geotags', function(req, res){
 });
 
 app.get('/geotags/previous', function(req,res){
+    let list =  FilterList.previous();
     res.status(200).json(
-        FilterList.previous(),{
+        {
+            list,
             page:FilterList.getCurrentPage(),
-            pages:FilterList.getSomeList()
+            pages:FilterList.getPageList()
         }
     )
 });
 
 app.get('/geotags/next', function(req,res){
-    res.status(200).json(FilterList.next(),{
+    let list =  FilterList.next();
+    res.status(200).json({
+        list,
         page:FilterList.getCurrentPage(),
-        pages:FilterList.getSomeList()
+        pages:FilterList.getPageList()
     })
 });
 
 app.get('/geotags/pg', function(req,res){
     var page = req.body.page;
+    console.log("page: " + page);
     res.status(200).json(
         FilterList.explicit(page),{
             page: FilterList.getCurrentPage(),
-            pages: FilterList.getSomeList()
+            pages: FilterList.getPageList()
         }
     )
 });
