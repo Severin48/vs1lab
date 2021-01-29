@@ -47,11 +47,17 @@ disButton.addEventListener("click", function(){
     ajax.open("GET", "/geotags"+latURL+lonURL+termURL, true);
     ajax.responseType = "json";
     ajax.send(null);
-    disButton.onreadystatechange = function() {
+    ajax.onreadystatechange = function() {
         if(ajax.readyState == 4){
             console.log("Ready!!!");
             console.log(ajax.response);
-            let resultArray = ajax.response.id;
+            let resultArray;
+            if (ajax.response.id == undefined){
+                resultArray = ajax.response.list;
+            } else {
+                resultArray = ajax.response.id;
+            }
+            console.log("resultArray: " + resultArray)
             let results = "";
 
             resultArray.forEach(function(tag){
@@ -59,7 +65,11 @@ disButton.addEventListener("click", function(){
                 results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
                 results += "</li>";
             });
-            $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+            if (ajax.response.id == undefined){
+                $("#result-img").attr("data-tags",JSON.stringify(ajax.response.list));
+            } else {
+                $("#result-img").attr("data-tags",JSON.stringify(ajax.response.id));
+            }
             $("#results").html(results);
             gtaLocator.updateLocation();
         }
@@ -71,6 +81,14 @@ disButton.addEventListener("click", function(){
 ajax.onreadystatechange = function() {
     if(ajax.readyState == 4){
         console.log("Ready!!!");
+        console.log("some Tests: " + pgButton);
+        let pageArray = ajax.response.pages;
+        let pages = "";
+        pageArray.forEach(function(page){
+            pages += "<a>";
+            pages += page.id;
+            pages += "</a>";
+        });
         let resultArray = ajax.response.id;
         let results = "";
         console.log(resultArray);
@@ -80,8 +98,9 @@ ajax.onreadystatechange = function() {
             results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
             results += "</li>";
         });
-        $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+        $("#result-img").attr("data-tags",JSON.stringify(ajax.response.id));
         $("#results").html(results);
+        $("#pg_btn").html(pages);
         gtaLocator.updateLocation();
     }
 }
@@ -94,6 +113,13 @@ previousButton.addEventListener("click", function(){
     ajax.onreadystatechange = function() {
         if(ajax.readyState == 4){
             console.log("Ready!!!");
+            let pageArray = ajax.response.pages;
+            let pages = "";
+            pageArray.forEach(function(page){
+                pages += "<a>";
+                pages += page.id;
+                pages += "</a>";
+            });
             let resultArray = ajax.response.list;
             let results = "";
             console.log(resultArray);
@@ -102,7 +128,7 @@ previousButton.addEventListener("click", function(){
                 results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
                 results += "</li>";
             });
-            $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+            $("#result-img").attr("data-tags",JSON.stringify(ajax.response.list));
             $("#results").html(results);
             gtaLocator.updateLocation();
         }
@@ -118,34 +144,50 @@ nextButton.addEventListener("click", function(){
         if(ajax.readyState == 4){
             let resultArray = ajax.response.list;
             let results = "";
-
+            let pageArray = ajax.response.pages;
+            let pages = "";
+            pageArray.forEach(function(page){
+                pages += "<a>";
+                pages += page.id;
+                pages += "</a>";
+            });
             resultArray.forEach(function(tag){
                 results += "<li>";
                 results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
                 results += "</li>";
             });
-            $("#result-img").attr("data-tags",JSON.stringify(ajax.response));
+            $("#result-img").attr("data-tags",JSON.stringify(ajax.response.list));
             $("#results").html(results);
             gtaLocator.updateLocation();
         }
     }
 })
+var Page = function(id){
+    this.id = id;
+}
 pgButton.addEventListener("click", function(){
     console.log("page");
     ajax.open("GET", "/geotags/pg", true);
     ajax.responseType = "json";
-    ajax.send(null);
-    pgButton.onreadystatechange = function() {
-        if(ajax.readyState == 4){
-            let resultArray = ajax.response;
-            let results = "";
 
+    ajax.send(null); //TODO: Muss hier was übergeben werden? auf value in Butten zugreifen mit pgButton.getAttribute('page');
+    ajax.onreadystatechange = function() {
+        if(ajax.readyState == 4){
+            let resultArray = ajax.response.list;
+            let results = "";
+            let pageArray = ajax.response.pages;
+            let pages = "";
+            pageArray.forEach(function(page){
+                pages += "<a>";
+                pages += page.id;
+                pages += "</a>";
+            });
             resultArray.forEach(function(tag){
                 results += "<li>";
                 results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
                 results += "</li>";
             });
-            $("#result-img").attr("data-tags",JSON.stringify(ajax.response.id));
+            $("#result-img").attr("data-tags",JSON.stringify(ajax.response.list));
             $("#results").html(results);
             gtaLocator.updateLocation();
         }
@@ -297,4 +339,3 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 $(function () {
     gtaLocator.updateLocation();
 });
-
