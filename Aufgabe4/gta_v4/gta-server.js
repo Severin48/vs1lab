@@ -92,7 +92,7 @@ let InMemory = (function (){
         searchTerm: function (term) {
             return tagList.filter(function (entry) {
 
-                   return entry.name.includes(term)|| entry.hashtag.includes(term)
+                return entry.name.includes(term)|| entry.hashtag.includes(term)
 
             });
 
@@ -118,7 +118,130 @@ let InMemory = (function (){
         }
     }
 })();
+function Page (id){
+    this.id = id;
+}
+let FilterList = (function (){
+    let tagList = [];
+    let listChanged = [];
+    let listPage = [];
+    listPage.push(new Page(1));
+    var pageCounter=1;
+    //let pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
+    let currentPage = 1;
+    let searchList=[];
+    let id = 0;
 
+    var searchPage = function(id){
+        var anzahl = id+1;
+        if (anzahl % 5 >0 ){
+            currentPage = Math.floor((anzahl / 5) +1);
+        } else {
+            currentPage = Math.floor(anzahl/5);
+        }
+        return currentPage;
+    }
+    return{
+
+        add: function (tag){
+            tag.id = id++;
+            tagList.push(tag);
+            console.log("ID: " + tag.id);
+
+            if((tag.id) % 5 === 0 && tag.id > 4){
+                pageCounter++;
+                //pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
+                listPage.push(new Page(currentPage+1));
+            }
+            searchPage(tag.id);
+            var endIndex = currentPage*5;
+            var begIndex = endIndex-5;
+            return tagList.slice(begIndex, endIndex);
+        },
+        next: function () {
+            if (pageCounter > currentPage){
+                currentPage = currentPage+1;
+            }
+            var endIndex = currentPage*5;
+            var begIndex = endIndex-5;
+            return tagList.slice(begIndex, endIndex);
+        },
+        previous: function(){
+            if (currentPage != 1){
+                currentPage = currentPage-1;
+            }
+
+            var endIndex = currentPage*5;
+            var begIndex = endIndex-5;
+
+            return tagList.slice(begIndex, endIndex);
+        },
+        explicit: function(page){
+            var endIndex = page*5
+            var begIndex = endIndex-5;
+            console.log("beg Index: " + begIndex + "end Index: " + endIndex);
+            return tagList.slice(begIndex, endIndex);
+        },
+        searchRadius: function(latitude, longitude, radius){
+            let tmp = tagList.filter(function (entry) {
+                return (
+                    (Math.abs(entry.latitude - latitude) <= radius) &&
+                    (Math.abs(entry.longitude - longitude) <= radius)
+                );
+            });
+            tmp.forEach(function(tag){
+                searchList.push(tag);
+            })
+            return searchList.slice(0,5);
+        },
+        searchTerm: function (term) {
+            let tmp = tagList.filter(function (entry) {
+
+                return entry.name.includes(term)|| entry.hashtag.includes(term)
+
+            });
+            tmp.forEach(function(tag){
+                searchList.push(tag);
+            })
+            return searchList.slice(0,5);
+        },
+        searchPrevious: function(){
+            if (currentPage != 1){
+                currentPage = currentPage-1;
+            }
+
+            var endIndex = currentPage*5;
+            var begIndex = endIndex-5;
+
+            return searchList.slice(begIndex, endIndex);
+        },
+        searchNext: function(){
+            if (pageCounter > currentPage){
+                currentPage = currentPage+1;
+            }
+            var endIndex = currentPage*5;
+            var begIndex = endIndex-5;
+            return searchList.slice(begIndex, endIndex);
+        },
+        searchExplicit: function(page){
+            var endIndex = page*5-1
+            var begIndex = endIndex-5;
+            return searchList.slice(begIndex, endIndex);
+        },
+        getCurrentPage: function(){
+            return currentPage;
+        },
+        getFirstPageList: function(){
+            return tagList.slice(0,5);
+        },
+        getSomeList: function(){
+            return listChanged;
+        },
+        getPageList: function(){
+            return listPage;
+        }
+    }
+})();
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
@@ -133,11 +256,18 @@ let InMemory = (function (){
 app.get('/', function(req, res) {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
+    let numbers = FilterList.getPageList();
+    let id = [];
+    numbers.forEach(function(page){
+        id.push(page.id);
+    })
     res.render('gta', {
-        taglist: InMemory.getTagList(),
+        taglist: FilterList.getFirstPageList(),
         lat: lat,
         long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5))
+        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
+        page: FilterList.getCurrentPage(),
+        pages: id
 
     });
     //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
@@ -218,11 +348,14 @@ app.post('/discovery', function(req, res) {
     }});
 
 app.post('/geotags', function(req, res){
-    let id = InMemory.add(req.body);
+    let id = FilterList.add(req.body);
+    console.log("Pagarray:" + FilterList.getPageList());
+    //res.header('Location', req.url + "/" + id);
+    res.status(201).json({
+        id,
+        pages: FilterList.getPageList()
+    })
 
-    //console.log(InMemory.getTagList());
-    res.header('Location', req.url + "/" + id);
-    res.status(201).json(InMemory.getTagList());
 });
 
 app.get('/geotags', function(req, res){
@@ -230,15 +363,72 @@ app.get('/geotags', function(req, res){
     let lat = req.query.lat;
     let lon = req.query.long;
     let term = req.query.term;
-
+    let id = FilterList.getFirstPageList();
 
     if(term === undefined){
-        res.status(200).json(InMemory.getTagList());
+        res.status(200).json({
+            id,
+            page: FilterList.getCurrentPage(),
+            pages: FilterList.getSomeList()
+        });
     } else if(term === ""){
-        res.status(200).json(InMemory.getTagList());
+        res.status(200).json({
+            id,
+            page: FilterList.getCurrentPage(),
+            pages: FilterList.getSomeList()
+        });
     } else {
-        res.status(200).json(InMemory.searchTerm(term));
+        let list = FilterList.searchTerm(term);
+        console.log("listeFilter: " + list);
+        res.status(200).json({
+            list,
+            page: FilterList.getCurrentPage(),
+            pages: FilterList.getSomeList()
+        });
     }
+});
+
+app.get('/geotags/previous', function(req,res){
+    let list;
+    if ( req.query.term !== undefined){
+        list = FilterList.searchPrevious();
+    }else {
+        list =  FilterList.previous();
+    }
+    res.status(200).json(
+        {
+            list,
+            page:FilterList.getCurrentPage(),
+            pages:FilterList.getPageList()
+        }
+    )
+});
+
+app.get('/geotags/next', function(req,res){
+    let list;
+    if ( req.query.term !== undefined){
+        list = FilterList.searchNext();
+    }else {
+        list =  FilterList.next();
+    }
+    res.status(200).json({
+        list,
+        page:FilterList.getCurrentPage(),
+        pages:FilterList.getPageList()
+    })
+});
+
+app.get('/geotags/pg', function(req,res){
+    var page =req.query.pageNumber;
+    console.log("page: " + page);
+    let list = FilterList.explicit(page);
+    res.status(200).json(
+        {
+            list,
+            page: FilterList.getCurrentPage(),
+            pages: FilterList.getPageList()
+        }
+    )
 });
 
 app.get('/geotags/:id',function(req, res){
@@ -283,4 +473,3 @@ let server = http.createServer(app);
  */
 
 server.listen(port);
-
