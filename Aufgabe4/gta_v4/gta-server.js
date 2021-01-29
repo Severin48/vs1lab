@@ -177,8 +177,9 @@ let FilterList = (function (){
             return tagList.slice(begIndex, endIndex);
         },
         explicit: function(page){
-            var endIndex = page*5-1
+            var endIndex = page*5
             var begIndex = endIndex-5;
+            console.log("beg Index: " + begIndex + "end Index: " + endIndex);
             return tagList.slice(begIndex, endIndex);
         },
         searchRadius: function(latitude, longitude, radius){
@@ -261,7 +262,7 @@ app.get('/', function(req, res) {
         id.push(page.id);
     })
     res.render('gta', {
-        taglist: InMemory.getTagList(),
+        taglist: FilterList.getFirstPageList(),
         lat: lat,
         long: long,
         datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
@@ -418,7 +419,7 @@ app.get('/geotags/next', function(req,res){
 });
 
 app.get('/geotags/pg', function(req,res){
-    var page = req.query.page;      //TODO: pageParameter richtig übergeben!!!
+    var page =req.query.pageNumber;
     console.log("page: " + page);
     let list = FilterList.explicit(page);
     res.status(200).json(
