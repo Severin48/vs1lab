@@ -12,6 +12,7 @@ console.log("The script is going to start...");
 let ajax = new XMLHttpRequest();
 var tagButton = document.getElementById("submit_geotag");
 var disButton = document.getElementById("discovery_apply");
+let disEnter = document.getElementById("discovery_search");
 
 var GeoTag = function (lat, lon, name, hashtag) {
     this.latitude = lat;
@@ -33,6 +34,17 @@ tagButton.addEventListener("click", function(){
     let hashtag = document.getElementById("hashtag_geotag").value;
     ajax.send(JSON.stringify(new GeoTag(parseFloat(lat), parseFloat(lon), name, hashtag)));
 
+})
+
+disEnter.addEventListener("keydown", function(event) {
+    if (event.defaultPrevented) {
+        return; // Do nothing if the event was already processed
+    }
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.key == "Enter") {
+        event.preventDefault();
+        disButton.click();
+    }
 })
 
 disButton.addEventListener("click", function(){
