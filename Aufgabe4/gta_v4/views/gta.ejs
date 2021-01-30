@@ -76,11 +76,10 @@
                 <li>
                     <a id="previousPage"> << </a>
                 </li>
-                <% if (pages !== undefined) pages.forEach(function(page) { %>
-                <li id="pg_btn"  name="pgbtn" ">
-                	<a id = "<%= page.id %>"> <%= page.id %> </a>
+                <% if (pagesList !== undefined) pagesList.forEach(function(page) { %>
 
-                </li>
+                	<button id="pg_btn" value=<%= page %> name="pgbtn"> <%= page %> </button>
+
                 <% }); %>
                 <li>
                     <a id="nextPage"> >> </a>
