@@ -152,6 +152,7 @@ let FilterList = (function (){
                 pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
                 //listPage.push(new Page(currentPage+1));
             }
+            pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
             searchPage(tag.id);
             var endIndex = currentPage*5;
             var begIndex = endIndex-5;
@@ -266,7 +267,7 @@ app.get('/', function(req, res) {
         long: long,
         datatags: JSON.stringify(FilterList.searchRadius(lat,long,5)),
         //page: FilterList.getCurrentPage(),
-        pagesList: numbers
+        pagesList: FilterList.getPageList()
 
     });
     //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
@@ -354,7 +355,6 @@ app.post('/geotags', function(req, res){
         id,
         pagesList: FilterList.getPageList()
     })
-
 });
 
 app.get('/geotags', function(req, res){

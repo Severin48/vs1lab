@@ -26,8 +26,7 @@ var GeoTag = function (lat, lon, name, hashtag) {
 }
 // Tagging Button
 tagButton.addEventListener("click", function(){
-    console.log("Adding")
-
+    console.log("Adding");
     ajax.open("POST", "/geotags", true);
     ajax.setRequestHeader("Content-Type", "application/json");
     ajax.responseType = "json";
@@ -60,6 +59,8 @@ tagButton.addEventListener("click", function(){
             gtaLocator.updateLocation();
         }
     }
+    // location.reload();
+    // return false;
 })
 //Discovery Button
 disButton.addEventListener("click", function(){
@@ -195,11 +196,11 @@ pgBtns.addEventListener("click", (event) => {
         console.log("Not a button");
         return;
     }
-    let btn = event.target;
+    //let btn = event.target;
     console.log("page");
     if (document.getElementById("discovery_search").value !== ""){
-        console.log("pg btn value: " + document.getElementById('pg_btn').getAttribute('value').toString());
-        let pageURL = "?pageNumber=" + document.getElementById('pg_btn').getAttribute('value').toString();
+        console.log("pg btn value: " + event.target.getAttribute('value').toString());
+        let pageURL = "?pageNumber=" + event.target.getAttribute('value').toString();
         let termURL = "&term=" + document.getElementById("discovery_search").value;
         ajax.open("GET", "/geotags/pg" + pageURL + termURL, true);
     } else {
