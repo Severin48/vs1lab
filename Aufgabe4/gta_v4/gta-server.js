@@ -123,11 +123,10 @@ function Page (id){
 }
 let FilterList = (function (){
     let tagList = [];
-    let listChanged = [];
-    let listPage = [];
-    listPage.push(new Page(1));
+
+
     var pageCounter=1;
-    //let pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
+    let pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
     let currentPage = 1;
     let searchList=[];
     let id = 0;
@@ -150,8 +149,8 @@ let FilterList = (function (){
 
             if((tag.id) % 5 === 0 && tag.id > 4){
                 pageCounter++;
-                //pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
-                listPage.push(new Page(currentPage+1));
+                pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
+                //listPage.push(new Page(currentPage+1));
             }
             searchPage(tag.id);
             var endIndex = currentPage*5;
@@ -189,9 +188,7 @@ let FilterList = (function (){
                     (Math.abs(entry.longitude - longitude) <= radius)
                 );
             });
-            tmp.forEach(function(tag){
-                searchList.push(tag);
-            })
+            searchList = tmp;
             return searchList.slice(0,5);
         },
         searchTerm: function (term) {
@@ -200,10 +197,14 @@ let FilterList = (function (){
                 return entry.name.includes(term)|| entry.hashtag.includes(term)
 
             });
-            tmp.forEach(function(tag){
-                searchList.push(tag);
-            })
+            searchList = tmp;
+            console.log("SearchList: "+searchList);
             return searchList.slice(0,5);
+        },
+        searchId: function(id){
+            let tmp =  tagList.filter(GeoTag => GeoTag.id == id);
+            searchList = tmp;
+            return searchList;
         },
         searchPrevious: function(){
             if (currentPage != 1){
@@ -234,11 +235,12 @@ let FilterList = (function (){
         getFirstPageList: function(){
             return tagList.slice(0,5);
         },
-        getSomeList: function(){
-            return listChanged;
-        },
+
         getPageList: function(){
-            return listPage;
+            return pg_array;
+        },
+        delete: function (GeoTag) {
+            tagList.splice(tagList.indexOf(GeoTag), 1);
         }
     }
 })();
@@ -257,21 +259,14 @@ app.get('/', function(req, res) {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
     let numbers = FilterList.getPageList();
-    let id = [];
-    if (numbers.length > 1) {
-        numbers.forEach(function (page) {
-            id.push(page.id);
-        })
-    } else {
-        id = [FilterList.getCurrentPage()];
-    }
+
     res.render('gta', {
         taglist: FilterList.getFirstPageList(),
         lat: lat,
         long: long,
-        datatags: JSON.stringify(InMemory.searchRadius(lat,long,5)),
-        page: FilterList.getCurrentPage(),
-        pages: id
+        datatags: JSON.stringify(FilterList.searchRadius(lat,long,5)),
+        //page: FilterList.getCurrentPage(),
+        pagesList: numbers
 
     });
     //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
@@ -357,7 +352,7 @@ app.post('/geotags', function(req, res){
     //res.header('Location', req.url + "/" + id);
     res.status(201).json({
         id,
-        pages: FilterList.getPageList()
+        pagesList: FilterList.getPageList()
     })
 
 });
@@ -373,13 +368,13 @@ app.get('/geotags', function(req, res){
         res.status(200).json({
             id,
             page: FilterList.getCurrentPage(),
-            pages: FilterList.getSomeList()
+            pagesList: FilterList.getPageList()
         });
     } else if(term === ""){
         res.status(200).json({
             id,
             page: FilterList.getCurrentPage(),
-            pages: FilterList.getSomeList()
+            pagesList: FilterList.getPageList()
         });
     } else {
         let list = FilterList.searchTerm(term);
@@ -387,7 +382,7 @@ app.get('/geotags', function(req, res){
         res.status(200).json({
             list,
             page: FilterList.getCurrentPage(),
-            pages: FilterList.getSomeList()
+            pagesList: FilterList.getPageList()
         });
     }
 });
@@ -403,7 +398,7 @@ app.get('/geotags/previous', function(req,res){
         {
             list,
             page:FilterList.getCurrentPage(),
-            pages:FilterList.getPageList()
+            pagesList:FilterList.getPageList()
         }
     )
 });
@@ -418,30 +413,36 @@ app.get('/geotags/next', function(req,res){
     res.status(200).json({
         list,
         page:FilterList.getCurrentPage(),
-        pages:FilterList.getPageList()
+        pagesList:FilterList.getPageList()
     })
 });
 
 app.get('/geotags/pg', function(req,res){
     var page =req.query.pageNumber;
     console.log("page: " + page);
-    let list = FilterList.explicit(page);
+    let list;
+    if ( req.query.term !== undefined){
+        list = FilterList.searchExplicit();
+    }else {
+        list =  FilterList.explicit(page);
+    }
+
     res.status(200).json(
         {
             list,
             page: FilterList.getCurrentPage(),
-            pages: FilterList.getPageList()
+            pagesList: FilterList.getPageList()
         }
     )
 });
 
 app.get('/geotags/:id',function(req, res){
     let id = req.params.id;
-    res.status(200).json(InMemory.searchId(id)[0]);
+    res.status(200).json(FilterList.searchId(id)[0]);
 });
 
 app.put('/geotags/:id',function(req, res){
-    let tag = InMemory.searchId(req.params.id)[0];
+    let tag = FilterList.searchId(req.params.id)[0];
     tag.latitude = req.body.latitude ? req.body.latitude : tag.latitude;
     tag.longitude = req.body.longitude ? req.body.longitude : tag.longitude;
     tag.name = req.body.name ? req.body.name : tag.name;
@@ -451,9 +452,9 @@ app.put('/geotags/:id',function(req, res){
 });
 
 app.delete('/geotags/:id',function(req, res){
-    if (InMemory.searchId(req.params.id)[0]) {
-        InMemory.delete(InMemory.searchId(req.params.id)[0]);
-        res.status(201).json(InMemory.getTagList());
+    if (FilterList.searchId(req.params.id)[0]) {
+        FilterList.delete(FilterList.searchId(req.params.id)[0]);
+        res.status(201).json(FilterList.getFirstPageList());
     } else {
         res.statusCode = 404;
         res.send("ID NOT FOUND");
