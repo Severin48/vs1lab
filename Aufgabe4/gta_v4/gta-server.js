@@ -258,9 +258,13 @@ app.get('/', function(req, res) {
     let long = req.body.longitudeGeotag;
     let numbers = FilterList.getPageList();
     let id = [];
-    numbers.forEach(function(page){
-        id.push(page.id);
-    })
+    if (numbers.length > 1) {
+        numbers.forEach(function (page) {
+            id.push(page.id);
+        })
+    } else {
+        id = [FilterList.getCurrentPage()];
+    }
     res.render('gta', {
         taglist: FilterList.getFirstPageList(),
         lat: lat,
