@@ -188,9 +188,7 @@ let FilterList = (function (){
                     (Math.abs(entry.longitude - longitude) <= radius)
                 );
             });
-            tmp.forEach(function(tag){
-                searchList.push(tag);
-            })
+            searchList = tmp;
             return searchList.slice(0,5);
         },
         searchTerm: function (term) {
@@ -199,9 +197,7 @@ let FilterList = (function (){
                 return entry.name.includes(term)|| entry.hashtag.includes(term)
 
             });
-            tmp.forEach(function(tag){
-                searchList.push(tag);
-            })
+            console.log("SearchList: "+searchList);
             return searchList.slice(0,5);
         },
         searchPrevious: function(){
