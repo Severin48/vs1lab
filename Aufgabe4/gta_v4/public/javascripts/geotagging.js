@@ -14,7 +14,7 @@ var tagButton = document.getElementById("submit_geotag");
 var disButton = document.getElementById("discovery_apply");
 var nextButton = document.getElementById("nextPage");
 var previousButton = document.getElementById("previousPage");
-var pgButton = document.getElementById("pg_btn");
+//var pgButton = document.getElementById("pg_btn");
 let pgBtns = document.getElementById("pg_btns");
 
 
@@ -55,6 +55,7 @@ tagButton.addEventListener("click", function(){
             });
             $("#result-img").attr("data-tags",JSON.stringify(ajax.response.id));
             $("#results").html(results);
+            $("#pg_btns").load(location.href + " #pg_btns");
 
             gtaLocator.updateLocation();
         }
@@ -229,9 +230,6 @@ pgBtns.addEventListener("click", (event) => {
     }
 })
 
-
-
-//TODO: Karte wird nicht aktualisiert und Tags werden nicht angezeigt wenn Suche ohne Suchbegriff eingegeben wird
 
 // Hier wird die verwendete API für Geolocations gewählt
 // Die folgende Deklaration ist ein 'Mockup', das immer funktioniert und eine fixe Position liefert.
