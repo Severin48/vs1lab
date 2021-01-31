@@ -123,6 +123,7 @@ let FilterList = (function (){
     let currentPage = 1;
     let searchList=[];
     let id = 0;
+    var disPageCounter = 1;
 
     var searchPage = function(id){
         var anzahl = id+1;
@@ -133,6 +134,10 @@ let FilterList = (function (){
         }
         return currentPage;
     }
+
+    let pg_array_search = Array(disPageCounter).fill().map((x,i)=>i+1);
+
+
     return{
 
         add: function (tag){
@@ -191,7 +196,16 @@ let FilterList = (function (){
 
             });
             searchList = tmp;
-            console.log("SearchList: "+searchList);
+            console.log(searchList.length);
+            if (searchList.length % 5 > 0){
+                disPageCounter = Math.floor(searchList.length / 5) +1;
+            } else {
+                disPageCounter = Math.floor(searchList.length / 5 );
+            }
+            console.log("disPageC " + disPageCounter);
+            pg_array_search = Array(disPageCounter).fill().map((x,i)=>i+1);
+            console.log("pg_ar_s " + pg_array_search);
+            //console.log("SearchList: "+searchList);
             return searchList.slice(0,5);
         },
         searchId: function(id){
@@ -210,7 +224,7 @@ let FilterList = (function (){
             return searchList.slice(begIndex, endIndex);
         },
         searchNext: function(){
-            if (pageCounter > currentPage){
+            if (disPageCounter > currentPage){
                 currentPage = currentPage+1;
             }
             var endIndex = currentPage*5;
@@ -231,6 +245,10 @@ let FilterList = (function (){
 
         getPageList: function(){
             return pg_array;
+        },
+        getFilterPageList: function(){
+            console.log("pg_ar_s call " + pg_array_search);
+            return pg_array_search
         },
         delete: function (GeoTag) {
             tagList.splice(tagList.indexOf(GeoTag), 1);
@@ -337,7 +355,7 @@ app.post('/geotags', function(req, res){
     //res.header('Location', req.url + "/" + id);
     res.status(201).json({
         id,
-        pagesList: FilterList.getPageList()
+        pagesList: FilterList.getPageList(),
     })
 });
 
@@ -351,22 +369,23 @@ app.get('/geotags', function(req, res){
     if(term === undefined){
         res.status(200).json({
             id,
-            page: FilterList.getCurrentPage(),
+            //page: FilterList.getCurrentPage(),
             pagesList: FilterList.getPageList()
         });
     } else if(term === ""){
         res.status(200).json({
             id,
-            page: FilterList.getCurrentPage(),
+            //page: FilterList.getCurrentPage(),
             pagesList: FilterList.getPageList()
         });
     } else {
         let list = FilterList.searchTerm(term);
-        console.log("listeFilter: " + list);
+        //console.log("listeFilter: " + list);
+        console.log("FP LIST " + FilterList.getFilterPageList());
         res.status(200).json({
             list,
-            page: FilterList.getCurrentPage(),
-            pagesList: FilterList.getPageList()
+            //page: FilterList.getCurrentPage(),
+            pagesList: FilterList.getFilterPageList()
         });
     }
 });
@@ -375,49 +394,94 @@ app.get('/geotags/previous', function(req,res){
     let list;
     if ( req.query.term !== undefined){
         list = FilterList.searchPrevious();
+        res.status(200).json(
+            {
+                list,
+                //page:FilterList.getCurrentPage(),
+                pagesList:FilterList.getFilterPageList()
+            }
+        )
     }else {
         list =  FilterList.previous();
+        res.status(200).json(
+            {
+                list,
+                //page:FilterList.getCurrentPage(),
+                pagesList:FilterList.getPageList()
+            }
+        )
     }
-    res.status(200).json(
-        {
-            list,
-            page:FilterList.getCurrentPage(),
-            pagesList:FilterList.getPageList()
-        }
-    )
+    // res.status(200).json(
+    //     {
+    //         list,
+    //         page:FilterList.getCurrentPage(),
+    //         pagesList:FilterList.getPageList()
+    //     }
+    // )
 });
 
 app.get('/geotags/next', function(req,res){
     let list;
-    if ( req.query.term !== undefined){
+    if (req.query.term !== undefined){
         list = FilterList.searchNext();
+        res.status(200).json(
+            {
+                list,
+                //page:FilterList.getCurrentPage(),
+                pagesList:FilterList.getFilterPageList()
+            }
+        )
     }else {
         list =  FilterList.next();
+        res.status(200).json(
+            {
+                list,
+                //page:FilterList.getCurrentPage(),
+                pagesList:FilterList.getPageList()
+            }
+        )
     }
-    res.status(200).json({
-        list,
-        page:FilterList.getCurrentPage(),
-        pagesList:FilterList.getPageList()
-    })
+    // res.status(200).json({
+    //     list,
+    //     page:FilterList.getCurrentPage(),
+    //     pagesList:FilterList.getPageList()
+    // })
 });
 
 app.get('/geotags/pg', function(req,res){
     var page =req.query.pageNumber;
-    console.log("page: " + page);
+    // console.log("page: " + page);
     let list;
-    if ( req.query.termURL !== undefined){
-        list = FilterList.searchExplicit();
+    console.log("Term: " + req.query.term);
+    console.log("FilterAr: " + FilterList.getFilterPageList());
+    if ( req.query.term !== undefined){
+        list = FilterList.searchExplicit(page);
+        res.status(200).json(
+            {
+                list,
+                //page:FilterList.getCurrentPage(),
+                //page: 1,
+                pagesList:FilterList.getFilterPageList()
+            }
+        )
     }else {
         list =  FilterList.explicit(page);
+        res.status(200).json(
+            {
+                list,
+                //page:FilterList.getCurrentPage(),
+                pagesList:FilterList.getPageList()
+            }
+        )
     }
 
-    res.status(200).json(
-        {
-            list,
-            page: FilterList.getCurrentPage(),
-            pagesList: FilterList.getPageList()
-        }
-    )
+    // res.status(200).json(
+    //     {
+    //         list,
+    //         page: FilterList.getCurrentPage(),
+    //         pagesList: FilterList.getPageList()
+    //     }
+    // )
 });
 
 app.get('/geotags/:id',function(req, res){

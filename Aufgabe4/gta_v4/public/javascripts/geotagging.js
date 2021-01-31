@@ -85,7 +85,7 @@ disButton.addEventListener("click", function(){
             } else {
                 resultArray = ajax.response.id;
             }
-            console.log("resultArray: " + resultArray)
+            console.log("resultArray: " + resultArray);
             let results = "";
 
             resultArray.forEach(function(tag){
@@ -93,12 +93,15 @@ disButton.addEventListener("click", function(){
                 results += (tag.name+" ("+tag.latitude+", "+tag.longitude+") "+tag.hashtag);
                 results += "</li>";
             });
+
             if (ajax.response.id == undefined){
                 $("#result-img").attr("data-tags",JSON.stringify(ajax.response.list));
             } else {
                 $("#result-img").attr("data-tags",JSON.stringify(ajax.response.id));
             }
             $("#results").html(results);
+            $("#pg_btns").load(location.href + " #pg_btns");
+            //$("#pg_btns").load(ajax.response.pagesList);
 
             gtaLocator.updateLocation();
         }
