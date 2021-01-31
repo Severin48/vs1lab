@@ -405,7 +405,7 @@ app.get('/geotags/pg', function(req,res){
     var page =req.query.pageNumber;
     console.log("page: " + page);
     let list;
-    if ( req.query.term !== undefined){
+    if ( req.query.termURL !== undefined){
         list = FilterList.searchExplicit();
     }else {
         list =  FilterList.explicit(page);

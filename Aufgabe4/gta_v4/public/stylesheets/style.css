@@ -38,6 +38,13 @@ label {
   margin: 6px;
   display: inline;
 }
+#pg_buttons div {
+  color: white;
+  background: #00B7FF;
+  padding: 6px;
+  margin: 6px;
+  display: inline;
+}
 #pg_buttons li a {
   color: white;
   background: #00B7FF;
