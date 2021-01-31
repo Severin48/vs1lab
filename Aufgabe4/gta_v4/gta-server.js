@@ -13,14 +13,10 @@ var http = require('http');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var express = require('express');
-// var credentials = require("./credentials.js");
-// var cookies = require('cookie-parser');
 
 
 var app;
-app = express(); //npm install express@">=3.0.0 <4.0.0" --save
-//var app = connect(); //npm install connect https://github.com/senchalabs/connect#middleware
-// app.use(cookies(credentials.cookieSecret));
+app = express();
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
@@ -35,14 +31,12 @@ app.use(express.static(__dirname + "/public"));
  * Teste das Ergebnis im Browser unter 'http://localhost:3000/'.
  */
 
-// TODO: CODE ERGÄNZEN
 app.use(express.static(__dirname + "/public"));
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
  */
 
-// TODO: CODE ERGÄNZEN
 function GeoTag (latitude, longitude, name, hashtag, id){
     this.latitude = latitude;
     this.longitude = longitude;
@@ -73,7 +67,6 @@ function GeoTag (latitude, longitude, name, hashtag, id){
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-// TODO: CODE ERGÄNZEN
 let InMemory = (function (){
     let tagList = [];
     let id = 0;
@@ -291,7 +284,6 @@ app.get('/', function(req, res) {
  * Die Objekte liegen in einem Standard Radius um die Koordinate (lat, lon).
  */
 
-// TODO: CODE ERGÄNZEN START
 app.post('/tagging', function (req, res)  {
     let lat = req.body.latitudeGeotag;
     let long = req.body.longitudeGeotag;
@@ -324,7 +316,6 @@ app.post('/tagging', function (req, res)  {
  * Falls 'term' vorhanden ist, wird nach Suchwort gefiltert.
  */
 
-// TODO: CODE ERGÄNZEN
 app.post('/discovery', function(req, res) {
     var lat = req.body.hid_latitude;
     var long = req.body.hid_longitude;
