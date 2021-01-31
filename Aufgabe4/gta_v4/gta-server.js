@@ -143,7 +143,6 @@ let FilterList = (function (){
             if((tag.id) % 5 === 0 && tag.id > 4){
                 pageCounter++;
                 pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
-                //listPage.push(new Page(currentPage+1));
             }
             pg_array = Array(pageCounter).fill().map((x,i)=>i+1);
             searchPage(tag.id);
@@ -263,12 +262,6 @@ app.get('/', function(req, res) {
         pagesList: FilterList.getPageList()
 
     });
-    //Zugriff auf Cookies per res.cookie("name", "wert", {signed: true});
-    //Dann res.send(); um Cookies zu senden
-    //console.log(req.cookies);
-    //console.log(req.signedCookies);
-    //var val = req.signedCookies. --name vom cookie--
-    //Cookie löschen: res.clearCookie(name)
 });
 
 /**

@@ -16,6 +16,7 @@ var nextButton = document.getElementById("nextPage");
 var previousButton = document.getElementById("previousPage");
 //var pgButton = document.getElementById("pg_btn");
 let pgBtns = document.getElementById("pg_btns");
+let disEnter = document.getElementById("discovery_search");
 
 
 var GeoTag = function (lat, lon, name, hashtag) {
@@ -103,6 +104,18 @@ disButton.addEventListener("click", function(){
         }
     }
 })
+
+disEnter.addEventListener("keydown", function(event) {
+    if (event.defaultPrevented) {
+        return; // Do nothing if the event was already processed
+    }
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.key == "Enter") {
+        event.preventDefault();
+        disButton.click();
+    }
+})
+
 // PreviousButton
 previousButton.addEventListener("click", function(){
     console.log("previous");
@@ -159,37 +172,6 @@ nextButton.addEventListener("click", function(){
         }
     }
 })
-// pg Button
-// pgButton.addEventListener("click", function () {
-//         console.log("page");
-//     if (document.getElementById("discovery_search").value !== ""){
-//         let pageURL = "?pageNumber=" + document.getElementById('pg_btn').getAttribute('value');
-//         let termURL = "&term=" + document.getElementById("discovery_search").value;
-//         ajax.open("GET", "/geotags/pg" + pageURL + termURL, true);
-//     } else {
-//         let pageURL = "?pageNumber=" + document.getElementById('pg_btn').getAttribute('value');
-//         ajax.open("GET", "/geotags/pg" + pageURL, true);
-//     }
-//
-//         ajax.responseType = "json";
-//
-//         ajax.send(null);
-//         ajax.onreadystatechange = function () {
-//             if (ajax.readyState == 4) {
-//                 let resultArray = ajax.response.list;
-//                 let results = "";
-//
-//                 resultArray.forEach(function (tag) {
-//                     results += "<li>";
-//                     results += (tag.name + " (" + tag.latitude + ", " + tag.longitude + ") " + tag.hashtag);
-//                     results += "</li>";
-//                 });
-//                 $("#result-img").attr("data-tags", JSON.stringify(ajax.response.list));
-//                 $("#results").html(results);
-//                 gtaLocator.updateLocation();
-//             }
-//         }
-//     })
 
 pgBtns.addEventListener("click", (event) => {
     const isButton = event.target.nodeName === 'BUTTON';
@@ -229,7 +211,6 @@ pgBtns.addEventListener("click", (event) => {
         }
     }
 })
-
 
 // Hier wird die verwendete API für Geolocations gewählt
 // Die folgende Deklaration ist ein 'Mockup', das immer funktioniert und eine fixe Position liefert.
