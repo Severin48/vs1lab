@@ -190,6 +190,7 @@ let FilterList = (function (){
             return searchList.slice(0,5);
         },
         searchTerm: function (term) {
+            currentPage = 1;
             let tmp = tagList.filter(function (entry) {
 
                 return entry.name.includes(term)|| entry.hashtag.includes(term)
@@ -224,6 +225,7 @@ let FilterList = (function (){
             return searchList.slice(begIndex, endIndex);
         },
         searchNext: function(){
+            console.log("disPage: " + disPageCounter);
             if (disPageCounter > currentPage){
                 currentPage = currentPage+1;
             }

@@ -94,13 +94,21 @@ disButton.addEventListener("click", function(){
                 results += "</li>";
             });
 
+            let pg_array = ajax.response.pagesList;
+            let pages = "";
+            pg_array.forEach(function (page) {
+                //<button id="pg_btn" value=<%= page %> name="pgbtn"> <%= page %> </button>
+                pages += "<button id='pg_btn' value=" + page + " name='pgbtn'>" + page + "</button>";
+            });
+
             if (ajax.response.id == undefined){
                 $("#result-img").attr("data-tags",JSON.stringify(ajax.response.list));
             } else {
                 $("#result-img").attr("data-tags",JSON.stringify(ajax.response.id));
             }
             $("#results").html(results);
-            $("#pg_btns").load(location.href + " #pg_btns");
+            $("#pg_btns").html(pages);
+            //$("#pg_btns").load(location.href + " #pg_btns");
             //$("#pg_btns").load(ajax.response.pagesList);
 
             gtaLocator.updateLocation();

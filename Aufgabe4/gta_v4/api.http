@@ -212,3 +212,20 @@ Content-Type: application/json
   "hashtag": "#KA"
 }
 ####
+
+PUT http://localhost:3000/geotags/0
+Content-Type: application/json
+
+{
+  "latitude": "60.14444",
+  "longitude": "14.12341",
+  "name": "iwi",
+  "hashtag": "#edu"
+}
+####
+
+DELETE http://localhost:3000/geotags/0
+####
+
+GET http://localhost:3000/geotags/0
+#####
